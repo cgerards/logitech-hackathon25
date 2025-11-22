@@ -4,8 +4,8 @@
              Width="260" Height="110">
 
     <StackPanel Margin="6,6,6,6">
-        <TextBlock Text="Action Wheel Popup" Foreground="White" FontWeight="Bold" FontSize="14"/>
-        <TextBlock Text="This is an example popup anchored near the button." Foreground="#FFD0D0D0" TextWrapping="Wrap" Margin="0,8,0,0"/>
+        <TextBlock Text="Welcome to the Agent!" Foreground="White" FontWeight="Bold" FontSize="14"/>
+        <TextBlock Text="Please type in your program-specific request." Foreground="#FFD0D0D0" TextWrapping="Wrap" Margin="0,8,0,0"/>
         <!-- Text field with paperplane submit button -->
         <Grid Margin="0,8,0,0">
             <Grid.ColumnDefinitions>
