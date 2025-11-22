@@ -1,4 +1,4 @@
-namespace Loupedeck.ExamplePlugin
+namespace Loupedeck.ActionlyPlugin
 {
     using System;
     using System.Threading;

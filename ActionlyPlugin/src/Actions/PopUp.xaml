@@ -1,4 +1,4 @@
-﻿<Window x:Class="Loupedeck.ExamplePlugin.PopUpWindow"
+﻿<Window x:Class="Loupedeck.ActionlyPlugin.PopUpWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="" Height="170" Width="300"

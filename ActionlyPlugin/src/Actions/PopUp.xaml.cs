@@ -1,9 +1,9 @@
-namespace Loupedeck.ExamplePlugin
+namespace Loupedeck.ActionlyPlugin
 {
+    using System;
     using System.Windows;
     using System.Windows.Input;
     using System.Windows.Media.Effects;
-    using Loupedeck.ActionlyPlugin;
 
     public partial class PopUpWindow : Window
     {
