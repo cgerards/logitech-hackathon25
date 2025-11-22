@@ -15,9 +15,9 @@ namespace Loupedeck.ActionlyPlugin
 
         // Initializes the command class.
         public PromptCommand()
-            : base(displayName: "Test", description: "Test description", groupName: "Commands")
+            : base(displayName: "Actionly", description: "Your AI Agent right in all MX-Master Mice!", groupName: "Commands")
         {
-            this.AddState("Prompt", "Initiate Prompt Session");
+            this.AddState("Unleash the power of your MX Master with the seamless AI Agent!", "Initiate Prompt Session");
         }
 
         // This method is called when the user executes the command.
