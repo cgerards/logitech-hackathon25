@@ -22,7 +22,12 @@ namespace Loupedeck.ActionlyPlugin
         {
             WpfPopupHost.ShowDialog(() =>
             {
-                var popup = new PopUpWindow();
+                ClientApplication app = this.Plugin.ClientApplication;
+
+                var popup = new PopUpWindow(app);
+
+
+
 
                 // Place popup near mouse as a reasonable default
                 var mousePos = Control.MousePosition;

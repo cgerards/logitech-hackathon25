@@ -28,8 +28,11 @@ namespace Loupedeck.ActionlyPlugin
         public PopUpState CurrentState { get; private set; } = PopUpState.Default;
         public Task<AIResponse> AiResponse { get; set; }
 
-        public PopUpWindow()
+        public ClientApplication ClientApp { get; private set; }
+
+        public PopUpWindow(ClientApplication clientApplication)
         {
+            this.ClientApp = clientApplication;
             InitializeComponent();
 
             // register drop shadow
@@ -60,11 +63,13 @@ namespace Loupedeck.ActionlyPlugin
                         // Setting DialogResult when shown with ShowDialog() closes the window automatically.
                         this.EnteredText = viewDefault.Text;
                         PluginLog.Info($"Prompt value is {this.EnteredText}");
+                        CommandExecutor executor = new CommandExecutor(this.ClientApp);
 
-                        GeminiClient aiClient = new GeminiClient();
+                        executor.ExecuteCombination(new AIResponse(["Control + KeyG", "String>O15<", "Return", "String>=SUMME(O6:O14)<", "Return"]));
+                        //GeminiClient aiClient = new GeminiClient();
 
 
-                        this.AiResponse = aiClient.GenerateFromTextAndImageAsync("", this.EnteredText, null);
+                        //this.AiResponse = aiClient.GenerateFromTextAndImageAsync("", this.EnteredText, null);
 
                         // Switch UI to loading state while keeping the popup open.
                         SetState(PopUpState.Loading);
@@ -117,6 +122,7 @@ namespace Loupedeck.ActionlyPlugin
 
                 case PopUpState.Confirm:
                     var viewConfirm = new ConfirmView();
+                    
                     ContentHost.Content = viewConfirm;
                     this.Dispatcher.BeginInvoke(new Action(() =>
                     {
