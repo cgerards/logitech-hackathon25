@@ -1,4 +1,4 @@
-﻿namespace Loupedeck.ActionlyPlugin.Actions
+﻿namespace Loupedeck.ActionlyPlugin.Helpers
 {
     using System;
     using System.Collections.Generic;
@@ -8,36 +8,19 @@
 
     using Loupedeck.ActionlyPlugin.Helpers.Models;
 
-    internal class MainCommand : PluginDynamicCommand
+    internal class CommandExecutor
     {
-        public MainCommand()
-            : base(displayName: "AI-Agent", description: "Starts the AI-Agent Task", groupName: "Commands")
-        {
-
+        ClientApplication ClientApp;
+        public CommandExecutor(ClientApplication clientApp) {
+            ApplicationSwitcher.SwitchToProcess("excel");
+            this.ClientApp = clientApp;
         }
-
-        protected override void RunCommand(String actionParameter)
-        {
-            //this.Plugin.ClientApplication.SendKeyboardShortcut(VirtualKeyCode.KeyV, ModifierKey.Control | ModifierKey.Shift);
-
-            this.ExecuteCombination(new AIResponse());
-
-            PluginLog.Info($"Now return&tab");
-
-            this.Plugin.ClientApplication.SendKeyboardShortcut(VirtualKeyCode.Return);
-        }
-
-
-        private void ShowDialog()
-        {
-            //mocked
-        }
-
 
         public void ExecuteCombination(AIResponse aiResponse)
         {
             foreach (var combo in aiResponse.Combinations)
             {
+                Thread.Sleep(100);
                 PluginLog.Info($"Combination to execute: {combo}");
                 if (string.IsNullOrEmpty(combo))
                 {
@@ -51,11 +34,11 @@
                     PluginLog.Info($"Detected String command — writing content: '{content}'");
                     this.writeString(content);
                     continue;
-                } else
+                }
+                else
                 {
                     this.parseShortCuts(combo.Split('+'));
                 }
-                Thread.Sleep(100);
             }
         }
 
@@ -78,9 +61,9 @@
                 {
                     PluginLog.Info($"Parsed key: {parsedKey} with modifiers {mods}");
                     // Einmalig senden: VirtualKey + alle gesammelten Modifier
-                    this.Plugin.ClientApplication.SendKeyboardShortcut(parsedKey, mods);
+                    this.ClientApp.SendKeyboardShortcut(parsedKey, mods);
                 }
-                   
+
             }
         }
 
@@ -88,7 +71,6 @@
         {
             foreach (char c in str)
             {
-                Thread.Sleep(100);
                 var mapping = MapCharToKey(c);
                 if (mapping.key == VirtualKeyCode.None)
                 {
@@ -97,7 +79,8 @@
                 }
                 PluginLog.Info($"Sending: '{mapping}'");
 
-                this.Plugin.ClientApplication.SendKeyboardShortcut(mapping.key, mapping.mods);
+                this.ClientApp.SendKeyboardShortcut(mapping.key, mapping.mods);
+                Thread.Sleep(100);
             }
         }
 

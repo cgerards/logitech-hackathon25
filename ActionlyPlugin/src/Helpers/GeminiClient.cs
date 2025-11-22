@@ -2,12 +2,10 @@
 {
     using System;
     using System.IO;
-    using System.Threading.Tasks;
     using System.Text.Json;
 
     using Google.GenAI;
     using Google.GenAI.Types;
-    using System.IO;
 
     using Loupedeck.ActionlyPlugin.Helpers.Models;
     using System.Reflection;
@@ -149,7 +147,7 @@
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error during content generation: {ex.Message}\n\n {ex.InnerException}");
+                PluginLog.Error($"Error during content generation: {ex.Message}\n\n {ex.InnerException}");
                 return null;
             }
         }

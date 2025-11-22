@@ -30,6 +30,7 @@ namespace Loupedeck.ActionlyPlugin
         public Task<AIResponse> AiResponseTask { get; set; }
         public AIResponse AiResponse { get; set; }
 
+
         public PopUpWindow()
         {
             InitializeComponent();
@@ -97,7 +98,7 @@ namespace Loupedeck.ActionlyPlugin
                         try
                         {
                             this.AiResponse= await this.AiResponseTask;
-
+                            AIResponseStore.Instance.Set(response);
                             this.Dispatcher.Invoke(() => this.SetState(PopUpState.Confirm));
 
                         }

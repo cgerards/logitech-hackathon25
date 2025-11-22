@@ -5,6 +5,9 @@ namespace Loupedeck.ActionlyPlugin
     using System.Windows.Forms;
     using System.Windows.Media;
 
+    using Loupedeck.ActionlyPlugin.Helpers;
+    using Loupedeck.ActionlyPlugin.Helpers.Models;
+
     // This class implements an example command that counts button presses.
 
     public class PromptCommand : PluginMultistateDynamicCommand
@@ -20,8 +23,9 @@ namespace Loupedeck.ActionlyPlugin
         // This method is called when the user executes the command.
         protected override void RunCommand(String actionParameter)
         {
-            WpfPopupHost.ShowDialog(() =>
+            WpfPopupHost.ShowDialogAndReturn(() =>
             {
+
                 var popup = new PopUpWindow();
 
                 // Place popup near mouse as a reasonable default
@@ -44,6 +48,13 @@ namespace Loupedeck.ActionlyPlugin
                 return popup;
             });
 
+            AIResponse reponse = AIResponseStore.Instance.Get();
+
+            CommandExecutor executor = new CommandExecutor(this.Plugin.ClientApplication);
+            PluginLog.Info("Reponse: " + reponse);
+            return;
+            executor.ExecuteCombination(reponse);
+                //new AIResponse(["Control + KeyG", "String>O15<", "Return", "String>=SUMME(O6:O14)<", "Return"]));
         }
 
         // This method is called when Loupedeck needs to show the command on the console or the UI.

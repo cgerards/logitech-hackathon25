@@ -57,6 +57,21 @@ namespace Loupedeck.ActionlyPlugin
             });
         }
 
+        public static Window ShowDialogAndReturn(Func<Window> createWindow)
+        {
+            EnsureStarted();
+
+            Window created = null;
+            _dispatcher.Invoke(() =>
+            {
+                created = createWindow();
+                created.ShowDialog();
+            });
+
+            // Nach ShowDialog() ist das Fenster geschlossen — Rückgabe der Instanz erlaubt Zugriff auf Properties
+            return created;
+        }
+
         public static void Invoke(Action action)
         {
             EnsureStarted();
