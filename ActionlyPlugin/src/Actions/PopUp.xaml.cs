@@ -6,6 +6,9 @@ namespace Loupedeck.ActionlyPlugin
     using System.Windows.Input;
     using System.Windows.Media.Effects;
     using System.Windows.Threading;
+
+    using Loupedeck.ActionlyPlugin.Helpers;
+    using Loupedeck.ActionlyPlugin.Helpers.Models;
     using Loupedeck.ActionlyPlugin.Views;
 
 
@@ -23,6 +26,7 @@ namespace Loupedeck.ActionlyPlugin
     {
         public String EnteredText { get; private set; }
         public PopUpState CurrentState { get; private set; } = PopUpState.Default;
+        public Task<AIResponse> AiResponse { get; set; }
 
         public PopUpWindow()
         {
@@ -57,6 +61,11 @@ namespace Loupedeck.ActionlyPlugin
                         this.EnteredText = viewDefault.Text;
                         PluginLog.Info($"Prompt value is {this.EnteredText}");
 
+                        GeminiClient aiClient = new GeminiClient();
+
+
+                        this.AiResponse = aiClient.GenerateFromTextAndImageAsync("", this.EnteredText, null);
+
                         // Switch UI to loading state while keeping the popup open.
                         SetState(PopUpState.Loading);
                     };
@@ -73,7 +82,7 @@ namespace Loupedeck.ActionlyPlugin
                 case PopUpState.Loading:
                     var viewLoading = new LoadingView();
                     ContentHost.Content = viewLoading;
-                    this.Dispatcher.BeginInvoke(new Action(() =>
+                    this.Dispatcher.BeginInvoke(new Action(async () =>
                     {
                         AdjustWindowSize();
                         // If LoadingView exposes FocusInput, call it
@@ -81,7 +90,29 @@ namespace Loupedeck.ActionlyPlugin
                     }), DispatcherPriority.Loaded);
 
                     // Start non-blocking loading sequence that transitions to Confirm after delay
-                    _ = StartLoadingSequenceAsync();
+                    _ = Task.Run(async () =>
+                    {
+                        try
+                        {
+                            AIResponse response = await this.AiResponse;
+                            PluginLog.Info(response.ToString());
+                            PluginLog.Info("AI Response received in PopUpWindow: " + response.Explanation);
+
+
+                            this.Dispatcher.Invoke(() => this.SetState(PopUpState.Confirm));
+
+                        }
+                        catch (Exception ex)
+                        {
+                            PluginLog.Error($"Error getting AI response: {ex.Message}");
+                            this.Dispatcher.Invoke(() =>
+                            {
+                                // Fehlerbehandlung im UI
+                                // z.B. zurück zum Default-State oder Fehlermeldung anzeigen
+                            });
+                        }
+                    });
+                    ;
                     break;
 
                 case PopUpState.Confirm:
@@ -92,6 +123,8 @@ namespace Loupedeck.ActionlyPlugin
                         AdjustWindowSize();
                         // If LoadingView exposes FocusInput, call it
                     }), DispatcherPriority.Loaded);
+
+
                     break;
             }
         }
