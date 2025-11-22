@@ -6,22 +6,22 @@
 type: plugin4
 
 # Name that identifies the plugin.
-name: Example
+name: Actionly
 
 # Plugin name that is shown to the user.
-displayName: Example
+displayName: Actionly
 
 # Short description of the plugin.
-description: Add a short description of the plugin here.
+description: Actionly is an AI-Agent for your desktop.
 
 # Name of the plugin library file.
-pluginFileName: ExamplePlugin.dll
+pluginFileName: ActionlyPlugin.dll
 
 # Plugin version.
 version: 1.0
 
 # Author of the plugin. The author can be a company or an individual developer.
-author: Lenovo
+author: HACKATUM
 
 # Copyright information.
 copyright: Copyright © 2025 Lenovo. All rights reserved.

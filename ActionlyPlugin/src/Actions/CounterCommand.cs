@@ -1,4 +1,4 @@
-namespace Loupedeck.ExamplePlugin
+namespace Loupedeck.ActionlyPlugin
 {
     using System;
 
@@ -10,7 +10,7 @@ namespace Loupedeck.ExamplePlugin
 
         // Initializes the command class.
         public CounterCommand()
-            : base(displayName: "Press Counter", description: "Counts button presses", groupName: "Commands")
+            : base(displayName: "AI-Agent", description: "Starts the AI-Agent Task", groupName: "Commands")
         {
         }
 

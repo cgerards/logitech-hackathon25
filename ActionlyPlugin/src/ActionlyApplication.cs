@@ -1,12 +1,12 @@
-namespace Loupedeck.ExamplePlugin
+namespace Loupedeck.ActionlyPlugin
 {
     using System;
 
     // This class can be used to connect the Loupedeck plugin to an application.
 
-    public class ExampleApplication : ClientApplication
+    public class ActionlyApplication : ClientApplication
     {
-        public ExampleApplication()
+        public ActionlyApplication()
         {
         }
 

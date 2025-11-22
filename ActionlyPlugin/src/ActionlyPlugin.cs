@@ -1,10 +1,10 @@
-namespace Loupedeck.ExamplePlugin
+namespace Loupedeck.ActionlyPlugin
 {
     using System;
 
     // This class contains the plugin-level logic of the Loupedeck plugin.
 
-    public class ExamplePlugin : Plugin
+    public class ActionlyPlugin : Plugin
     {
         // Gets a value indicating whether this is an API-only plugin.
         public override Boolean UsesApplicationApiOnly => true;
@@ -13,7 +13,7 @@ namespace Loupedeck.ExamplePlugin
         public override Boolean HasNoApplication => true;
 
         // Initializes a new instance of the plugin class.
-        public ExamplePlugin()
+        public ActionlyPlugin()
         {
             // Initialize the plugin log.
             PluginLog.Init(this.Log);
