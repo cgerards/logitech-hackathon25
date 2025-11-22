@@ -28,11 +28,9 @@ namespace Loupedeck.ActionlyPlugin
         public PopUpState CurrentState { get; private set; } = PopUpState.Default;
         public Task<AIResponse> AiResponse { get; set; }
 
-        public ClientApplication ClientApp { get; private set; }
 
-        public PopUpWindow(ClientApplication clientApplication)
+        public PopUpWindow()
         {
-            this.ClientApp = clientApplication;
             InitializeComponent();
 
             // register drop shadow
@@ -63,13 +61,11 @@ namespace Loupedeck.ActionlyPlugin
                         // Setting DialogResult when shown with ShowDialog() closes the window automatically.
                         this.EnteredText = viewDefault.Text;
                         PluginLog.Info($"Prompt value is {this.EnteredText}");
-                        CommandExecutor executor = new CommandExecutor(this.ClientApp);
 
-                        executor.ExecuteCombination(new AIResponse(["Control + KeyG", "String>O15<", "Return", "String>=SUMME(O6:O14)<", "Return"]));
-                        //GeminiClient aiClient = new GeminiClient();
+                        GeminiClient aiClient = new GeminiClient();
+                        ScreenshotHelper.TakeScreenshot();
 
-
-                        //this.AiResponse = aiClient.GenerateFromTextAndImageAsync("", this.EnteredText, null);
+                        this.AiResponse = aiClient.GenerateFromTextAndImageAsync("", this.EnteredText, null);
 
                         // Switch UI to loading state while keeping the popup open.
                         SetState(PopUpState.Loading);
@@ -100,9 +96,11 @@ namespace Loupedeck.ActionlyPlugin
                         try
                         {
                             AIResponse response = await this.AiResponse;
+                            if (response == null)
+                                PluginLog.Info("aiReponse Null");
                             PluginLog.Info(response.ToString());
                             PluginLog.Info("AI Response received in PopUpWindow: " + response.Explanation);
-
+                            AIResponseStore.Instance.Set(response);
 
                             this.Dispatcher.Invoke(() => this.SetState(PopUpState.Confirm));
 
