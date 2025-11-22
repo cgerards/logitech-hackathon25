@@ -24,7 +24,10 @@ namespace Loupedeck.ActionlyPlugin
             // Get processes by name (without file extension)
             var processes = Process.GetProcessesByName(processName);
             if (processes.Length == 0)
+            {
+                PluginLog.Info($"No process found with name: {processName}");
                 return false;
+            }
 
             var process = processes[0];
             IntPtr handle = process.MainWindowHandle;

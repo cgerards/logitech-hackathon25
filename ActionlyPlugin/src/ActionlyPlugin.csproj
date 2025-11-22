@@ -40,10 +40,15 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="System.Drawing.Common" Version ="8.0.0" />
+		<PackageReference Include="System.Drawing.Common" Version="8.0.0" />
 	</ItemGroup>
   <ItemGroup>
     <Folder Include="Helpers\Models\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Helpers\Prompt.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <Target Name="CopyPackage" AfterTargets="PostBuildEvent">

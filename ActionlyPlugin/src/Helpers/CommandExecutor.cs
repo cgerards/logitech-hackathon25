@@ -1,10 +1,6 @@
 ﻿namespace Loupedeck.ActionlyPlugin.Helpers
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     using Loupedeck.ActionlyPlugin.Helpers.Models;
 
@@ -12,21 +8,29 @@
     {
         ClientApplication ClientApp;
         public CommandExecutor(ClientApplication clientApp) {
-            ApplicationSwitcher.SwitchToProcess("excel");
+            ApplicationSwitcher.SwitchToProcess("olk");
             this.ClientApp = clientApp;
         }
 
         public void ExecuteCombination(AIResponse aiResponse)
         {
+
             foreach (var combo in aiResponse.Combinations)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(200);
                 PluginLog.Info($"Combination to execute: {combo}");
                 if (string.IsNullOrEmpty(combo))
                 {
                     continue;
                 }
 
+                if (combo.Equals("Wait"))
+                {
+                    PluginLog.Info(combo + " — waiting 3 seconds");
+                    Thread.Sleep(3000);
+                    continue;
+                }
+                
                 const string prefix = "String>";
                 if (combo.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) && combo.EndsWith("<", StringComparison.Ordinal))
                 {
