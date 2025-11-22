@@ -20,6 +20,12 @@ namespace Loupedeck.ActionlyPlugin
             this.AddState("Unleash the power of your MX Master with the seamless AI Agent!", "Initiate Prompt Session");
         }
 
+        protected override Boolean OnLoad()
+        {
+            this.Plugin.PluginEvents.AddEvent("ringing", "Play Ringing Haptic", "Description");
+            return true;
+        }
+
         // This method is called when the user executes the command.
         protected override void RunCommand(String actionParameter)
         {
@@ -54,6 +60,7 @@ namespace Loupedeck.ActionlyPlugin
                 CommandExecutor executor = new CommandExecutor(this.Plugin.ClientApplication, response);
                 PluginLog.Info("Reponse: " + response);
                 executor.ExecuteCombination();
+                this.Plugin.PluginEvents.RaiseEvent("ringing");
             }
             AIResponseStore.Instance.Set(null);
         }
