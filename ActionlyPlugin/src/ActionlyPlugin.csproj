@@ -24,6 +24,9 @@
     <OutputPath>$(BaseOutputPath)$(Configuration)\bin\</OutputPath>
 
     <PluginShortName>Actionly</PluginShortName>
+
+	  <UseSystemDrawing>true</UseSystemDrawing>
+	  <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
 
   <ItemGroup>
@@ -36,6 +39,9 @@
     </Reference>
   </ItemGroup>
 
+	<ItemGroup>
+		<PackageReference Include="System.Drawing.Common" Version ="8.0.0" />
+	</ItemGroup>
   <ItemGroup>
     <Folder Include="Helpers\Models\" />
   </ItemGroup>
