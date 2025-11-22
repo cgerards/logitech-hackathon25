@@ -5,6 +5,7 @@
 
     using Google.GenAI;
     using Google.GenAI.Types;
+    using System.IO;
 
 
     public class GeminiClient
