@@ -78,7 +78,6 @@ namespace Loupedeck.ActionlyPlugin
                     {
                         AdjustWindowSize();
                         // If LoadingView exposes FocusInput, call it
-                        viewLoading.FocusInput();
                     }), DispatcherPriority.Loaded);
                     break;
             }

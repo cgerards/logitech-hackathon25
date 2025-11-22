@@ -3,27 +3,29 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Width="260" Height="110">
 
-    <Border Background="#FF333333" CornerRadius="6" Padding="8">
+    <Border CornerRadius="6" Padding="8">
         <StackPanel>
-            <TextBlock Text="LOADING PAGE" Foreground="White" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center"/>
+            <TextBlock Text="AGENT STARTED" Foreground="White" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center"/>
             <TextBlock Text="Please wait while the operation completes." Foreground="#FFD0D0D0" TextWrapping="Wrap" Margin="0,8,0,0"/>
 
-            <Grid Margin="0,8,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="36" />
-                </Grid.ColumnDefinitions>
+            <!-- Spinner -->
+            <Canvas Width="40" Height="40" HorizontalAlignment="Center" Margin="0,12,0,0">
+                <Ellipse Width="36" Height="36" Stroke="#FF2A8BF2" StrokeThickness="4" StrokeDashArray="2 6" RenderTransformOrigin="0.5,0.5">
+                    <Ellipse.RenderTransform>
+                        <RotateTransform />
+                    </Ellipse.RenderTransform>
+                    <Ellipse.Triggers>
+                        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                            <BeginStoryboard>
+                                <Storyboard RepeatBehavior="Forever">
+                                    <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)" From="0" To="360" Duration="0:0:1" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Ellipse.Triggers>
+                </Ellipse>
+            </Canvas>
 
-                <TextBox x:Name="InnerInputTextBox" Grid.Column="0" MinWidth="180" Height="28" Background="#FF1E1E1E" Foreground="White" BorderBrush="#FF3E3E42" Padding="8,0" VerticalContentAlignment="Center" />
-
-                <Button Grid.Column="1" Width="32" Height="28" Margin="6,0,0,0" ToolTip="Send" Background="#FF2A8BF2" BorderBrush="#FF1F6FCF" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Path Data="M2,21 L23,12 L2,3 L8,12 L2,21 Z" Fill="White" Stretch="Uniform" Width="14" Height="14" RenderTransformOrigin="0.5,0.5">
-                        <Path.RenderTransform>
-                            <RotateTransform Angle="-35"/>
-                        </Path.RenderTransform>
-                    </Path>
-                </Button>
-            </Grid>
         </StackPanel>
     </Border>
 </UserControl>
