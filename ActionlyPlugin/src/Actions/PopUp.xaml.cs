@@ -139,8 +139,9 @@ namespace Loupedeck.ActionlyPlugin
                 var contentHeight = (!double.IsNaN(fe.Height) && fe.Height > 0) ? fe.Height : fe.DesiredSize.Height;
 
                 // Provide sensible minimums so the window is not too small
-                this.Width = Math.Max(260, contentWidth + 40);
-                this.Height = Math.Max(110, contentHeight + 80);
+                // Reduce added padding so popup feels tighter
+                this.Width = Math.Max(240, contentWidth + 20);
+                this.Height = Math.Max(90, contentHeight + 30);
 
                 // Force layout update
                 this.UpdateLayout();
