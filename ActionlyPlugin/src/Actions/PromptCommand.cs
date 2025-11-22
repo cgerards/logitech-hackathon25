@@ -48,12 +48,12 @@ namespace Loupedeck.ActionlyPlugin
                 return popup;
             });
 
-            AIResponse reponse = AIResponseStore.Instance.Get();
-            if (reponse != null)
+            AIResponse response = AIResponseStore.Instance.Get();
+            if (response != null)
             {
-                CommandExecutor executor = new CommandExecutor(this.Plugin.ClientApplication);
-                PluginLog.Info("Reponse: " + reponse);
-                executor.ExecuteCombination(reponse);
+                CommandExecutor executor = new CommandExecutor(this.Plugin.ClientApplication, response);
+                PluginLog.Info("Reponse: " + response);
+                executor.ExecuteCombination();
             }
             AIResponseStore.Instance.Set(null);
         }
