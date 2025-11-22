@@ -1,7 +1,6 @@
 <Project>
     <PropertyGroup>
         <LangVersion>latest</LangVersion>
-        <BaseIntermediateOutputPath>$(SolutionDir)obj\</BaseIntermediateOutputPath>
-        <BaseOutputPath>$(SolutionDir)..\bin\</BaseOutputPath>
+        <!-- Removed BaseIntermediateOutputPath and BaseOutputPath overrides to avoid collisions between project and solution obj/output directories which cause duplicate generated files -->
     </PropertyGroup>
 </Project>

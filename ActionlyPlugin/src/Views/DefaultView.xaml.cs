@@ -3,6 +3,7 @@ namespace Loupedeck.ActionlyPlugin.Views
     using System;
     using System.Windows.Controls;
     using System.Windows.Input;
+    using System.Windows.Threading;
 
     public partial class DefaultView : UserControl
     {
@@ -25,6 +26,14 @@ namespace Loupedeck.ActionlyPlugin.Views
 
         public string Text => this.InnerInputTextBox?.Text ?? string.Empty;
 
-        public void FocusInput() => this.InnerInputTextBox?.Focus();
+        public void FocusInput()
+        {
+            // Ensure focus request runs on the UI dispatcher and sets keyboard focus explicitly
+            this.Dispatcher.BeginInvoke(DispatcherPriority.Input, new Action(() =>
+            {
+                this.InnerInputTextBox?.Focus();
+                Keyboard.Focus(this.InnerInputTextBox);
+            }));
+        }
     }
 }
