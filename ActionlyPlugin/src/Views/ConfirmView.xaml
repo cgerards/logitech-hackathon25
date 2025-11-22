@@ -17,8 +17,8 @@
             <ListBox Grid.Row="2" ItemsSource="{Binding Response.Combinations}" />
 
             <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8,0,0">
-                <Button Content="Do not execute" Width="120" Margin="0,0,8,0"/>
-                <Button Content="Execute automatically" Width="120"/>
+                <Button Content="Do not execute" Width="120" Margin="0,0,8,0" Click="Cancel_Click"/>
+                <Button Content="Execute automatically" Width="120" Click="Confirm_Click"/>
             </StackPanel>
         </Grid>
     </Border>

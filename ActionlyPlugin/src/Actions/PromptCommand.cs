@@ -49,11 +49,12 @@ namespace Loupedeck.ActionlyPlugin
             });
 
             AIResponse reponse = AIResponseStore.Instance.Get();
-
-            CommandExecutor executor = new CommandExecutor(this.Plugin.ClientApplication);
-            PluginLog.Info("Reponse: " + reponse);
-            executor.ExecuteCombination(reponse);
-            AIResponseStore.Instance.Set(null);
+            if (reponse != null)
+            {
+                CommandExecutor executor = new CommandExecutor(this.Plugin.ClientApplication);
+                PluginLog.Info("Reponse: " + reponse);
+                executor.ExecuteCombination(reponse);
+            }
         }
 
         // This method is called when Loupedeck needs to show the command on the console or the UI.
