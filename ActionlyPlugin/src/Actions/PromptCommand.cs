@@ -1,0 +1,52 @@
+namespace Loupedeck.ExamplePlugin
+{
+    using System;
+    using System.Windows;
+    using System.Windows.Forms;
+    using System.Windows.Media;
+
+    // This class implements an example command that counts button presses.
+
+    public class PromptCommand : PluginDynamicCommand
+    {
+
+        // Initializes the command class.
+        public PromptCommand()
+            : base(displayName: "Test", description: "Test description", groupName: "Commands")
+        {
+        }
+
+        // This method is called when the user executes the command.
+        protected override void RunCommand(String actionParameter)
+        {
+            WpfPopupHost.ShowDialog(() =>
+            {
+                var popup = new PopUpWindow();
+
+                // Place popup near mouse as a reasonable default
+                var mousePos = Control.MousePosition;
+                var source = PresentationSource.FromVisual(System.Windows.Application.Current?.MainWindow ?? new System.Windows.Window());
+                double dpiX = 1.0, dpiY = 1.0;
+                if (source?.CompositionTarget != null)
+                {
+                    dpiX = source.CompositionTarget.TransformToDevice.M11;
+                    dpiY = source.CompositionTarget.TransformToDevice.M22;
+                }
+
+                popup.WindowStartupLocation = WindowStartupLocation.Manual;
+                popup.Left = mousePos.X / dpiX + 10;
+                popup.Top = mousePos.Y / dpiY - 10;
+
+                popup.ShowActivated = true;
+                popup.Topmost = true;
+
+                return popup;
+            });
+
+        }
+
+        // This method is called when Loupedeck needs to show the command on the console or the UI.
+        protected override String GetCommandDisplayName(String actionParameter, PluginImageSize imageSize) =>
+            $"Prompt Button!";
+    }
+}
