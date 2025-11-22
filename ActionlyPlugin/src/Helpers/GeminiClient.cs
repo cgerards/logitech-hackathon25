@@ -155,7 +155,7 @@
             if (userPrompt.ToLower().Contains("outlook"))
             {
                 aiResponse.Explanation = "I add the provided timeline of HACKATUM into the Outlook Calendar";
-                aiResponse.Combinations = new String[] { 
+                aiResponse.Combinations = new String[] {
                     "Control + N",
                     "String>Check-In<",
                     "Tab",
