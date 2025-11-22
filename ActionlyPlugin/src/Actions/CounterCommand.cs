@@ -1,12 +1,14 @@
 namespace Loupedeck.ActionlyPlugin
 {
     using System;
+    using System.Threading.Tasks;
+
+    using Loupedeck.ActionlyPlugin.Helpers;
 
     // This class implements an example command that counts button presses.
 
     public class CounterCommand : PluginDynamicCommand
     {
-        private Int32 _counter = 0;
 
         // Initializes the command class.
         public CounterCommand()
@@ -15,15 +17,22 @@ namespace Loupedeck.ActionlyPlugin
         }
 
         // This method is called when the user executes the command.
-        protected override void RunCommand(String actionParameter)
+        protected override async void RunCommand(String actionParameter)
         {
-            this._counter++;
-            this.ActionImageChanged(); // Notify the plugin service that the command display name and/or image has changed.
-            PluginLog.Info($"Counter value is {this._counter}"); // Write the current counter value to the log file.
+
+            PluginLog.Info("LLM Response on the way.");
+            var http = new GeminiClient();
+            PluginLog.Info("LLM Response on the wa.");
+
+            var test = await http.GenerateFromTextAndImageAsync("Hilf dem User", "Was ist auf dem Bild zu sehen?", "C:\\Users\\Lenovo\\AppData\\Local\\Logi\\LogiPluginService\\PluginData\\Actionly\\bild.png");
+
+            PluginLog.Info("LLM Response received." + test);
+            PluginLog.Info("LLM Request sent.");
+
         }
 
         // This method is called when Loupedeck needs to show the command on the console or the UI.
         protected override String GetCommandDisplayName(String actionParameter, PluginImageSize imageSize) =>
-            $"Press Counter{Environment.NewLine}{this._counter}";
+            $"Press Counter{Environment.NewLine}";
     }
 }
