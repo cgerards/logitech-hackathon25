@@ -167,6 +167,7 @@
                     "String>10:00<",
                     "Tab",
                     "String>10:00<",
+                    "Tab",
                     "Control + KeyS",
                     "Wait",
                     "Control + KeyN",
@@ -180,6 +181,7 @@
                     "String>10:15<",
                     "Tab",
                     "String>12:30<",
+                    "Tab",
                     "Control + KeyS",
                     "Wait",
                     "Control + KeyN",
@@ -193,6 +195,7 @@
                     "String>14:00<",
                     "Tab",
                     "String>16:30<",
+                    "Tab",
                     "Control + KeyS",
                     "Wait",
 

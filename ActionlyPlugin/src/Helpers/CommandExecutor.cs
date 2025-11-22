@@ -1,6 +1,7 @@
 ﻿namespace Loupedeck.ActionlyPlugin.Helpers
 {
     using System;
+    using System.Windows.Media.Media3D;
 
     using Loupedeck.ActionlyPlugin.Helpers.Models;
 
@@ -14,7 +15,7 @@
 
         public void ExecuteCombination(AIResponse aiResponse)
         {
-
+            Thread.Sleep(2000);
             foreach (var combo in aiResponse.Combinations)
             {
                 Thread.Sleep(200);

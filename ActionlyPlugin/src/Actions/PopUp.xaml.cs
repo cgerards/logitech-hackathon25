@@ -73,6 +73,13 @@ namespace Loupedeck.ActionlyPlugin
                         SetState(PopUpState.Loading);
                     };
 
+                    viewDefault.CloseRequested += (s, e) =>
+                    {
+                        // Handle close request from DefaultView
+                        this.DialogResult = false;
+                        this.Close();
+                    };
+
                     ContentHost.Content = viewDefault;
                     // Defer sizing/focus until WPF has measured the new content
                     this.Dispatcher.BeginInvoke(new Action(() =>

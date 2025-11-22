@@ -12,6 +12,8 @@ namespace Loupedeck.ActionlyPlugin.Views
     {
 
         public AIResponse Response { get; set; }
+        public event EventHandler CloseRequested;
+
 
         public ConfirmView(AIResponse response)
         {
@@ -21,6 +23,12 @@ namespace Loupedeck.ActionlyPlugin.Views
             PluginLog.Info("ConfirmView initialized with response." + response.Explanation);
         }
 
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Event auslösen
+            CloseRequested?.Invoke(this, EventArgs.Empty);
+        }
 
 
         private void Confirm_Click(Object sender, RoutedEventArgs e)

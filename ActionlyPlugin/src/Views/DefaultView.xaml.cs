@@ -8,10 +8,20 @@ namespace Loupedeck.ActionlyPlugin.Views
 
     public partial class DefaultView : UserControl
     {
+
+        public event EventHandler CloseRequested;
+
         public DefaultView()
         {
             InitializeComponent();
             this.InnerInputTextBox.KeyDown += InnerInputTextBox_KeyDown;
+        }
+
+
+        public void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Event auslösen
+            CloseRequested?.Invoke(this, EventArgs.Empty);
         }
 
         private void InnerInputTextBox_KeyDown(object sender, KeyEventArgs e)
