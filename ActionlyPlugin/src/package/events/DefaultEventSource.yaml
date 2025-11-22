@@ -1,0 +1,4 @@
+events:
+    - name: ringing
+      displayName: Success Ringing
+      description: The Action was successfull

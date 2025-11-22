@@ -1,0 +1,4 @@
+haptics:
+    ringing:
+        DEFAULT: ringing
+        MX Master 4: ringing
