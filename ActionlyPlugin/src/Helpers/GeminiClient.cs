@@ -149,23 +149,53 @@
                 Combinations = new string[1]
             };
 
-            await Task.CompletedTask;
-            Thread.Sleep(5000);
+            await Task.Delay(5000);
+
 
             if (userPrompt.ToLower().Contains("outlook"))
             {
                 aiResponse.Explanation = "I add the provided timeline of HACKATUM into the Outlook Calendar";
                 aiResponse.Combinations = new String[] {
-                    "Control + N",
-                    "String>Check-In<",
+                    "Control + KeyN",
+                    "Wait",
+                    "String>Project Submission Deadline<",
                     "Tab",
                     "Tab",
-                    "String>21.11.2025<",
                     "Tab",
-                    "String>15:00<",
+                    "String>22.11.2025<",
                     "Tab",
-                    "String>17:00<",
-                    "Control * S",
+                    "String>10:00<",
+                    "Tab",
+                    "String>10:00<",
+                    "Control + KeyS",
+                    "Wait",
+                    "Control + KeyN",
+                    "Wait",
+                    "String>Project Pitches<",
+                    "Tab",
+                    "Tab",
+                    "Tab",
+                    "String>22.11.2025<",
+                    "Tab",
+                    "String>10:15<",
+                    "Tab",
+                    "String>12:30<",
+                    "Control + KeyS",
+                    "Wait",
+                    "Control + KeyN",
+                    "Wait",
+                    "String>Final Pitches & Awards Ceremony<",
+                    "Tab",
+                    "Tab",
+                    "Tab",
+                    "String>22.11.2025<",
+                    "Tab",
+                    "String>14:00<",
+                    "Tab",
+                    "String>16:30<",
+                    "Control + KeyS",
+                    "Wait",
+
                 };
 
             }

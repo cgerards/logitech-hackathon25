@@ -26,6 +26,6 @@
 "Do not explain the reasoning unless explicitly requested; only provide the actionable key codes.\n\n" +
 "If the goal cannot be achieved with the visible interface and keyboard input alone, write an explanation how to do it and leave the combinations empty.\n\n" +
 "Your output will be consumed by the application logic; therefore, be precise, consistent, and minimal.";
-
+        
     }
 }
