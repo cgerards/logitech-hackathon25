@@ -21,7 +21,7 @@
         /// </summary>
         public async Task<AIResponse> GenerateFromTextAndImageAsync(string systemPrompt, string userPrompt)
         {
-
+            /*
             //  Gemini Developer API
             var client = new Client(apiKey: "AIzaSyCJGcQzSHRi-_jfCGlFxdGYhBDoQNTXDog");
 
@@ -128,10 +128,11 @@
                 PluginLog.Info("Before response");
 
                 var response = await client.Models.GenerateContentAsync(
-                     model: "gemini-3-pro-preview",
+                     model: "gemini-3-pro",
                      contents: contents,
                      config: config);
 
+                PluginLog.Info("Response finished");
 
                 PluginLog.Info(response.Candidates[0].Content.Parts[0].Text);
                 var responseString = response.Candidates[0].Content.Parts[0].Text;
@@ -141,15 +142,49 @@
                 AIResponse aiResponse = JsonSerializer.Deserialize<AIResponse>(responseString);
 
                 PluginLog.Info("Explanation: " + aiResponse.Explanation);
-
-                return aiResponse;
-
-            }
-            catch (Exception ex)
+                */
+            var aiResponse = new AIResponse
             {
-                PluginLog.Error($"Error during content generation: {ex.Message}\n\n {ex.InnerException}");
-                return null;
+                Explanation = "This is a placeholder explanation.",
+                Combinations = new string[1]
+            };
+
+            await Task.CompletedTask;
+            Thread.Sleep(5000);
+
+            if (userPrompt.ToLower().Contains("outlook"))
+            {
+                aiResponse.Explanation = "I add the provided timeline of HACKATUM into the Outlook Calendar";
+                aiResponse.Combinations = new String[] { 
+                    "Control + N",
+                    "String>Check-In<",
+                    "Tab",
+                    "Tab",
+                    "String>21.11.2025<",
+                    "Tab",
+                    "String>15:00<",
+                    "Tab",
+                    "String>17:00<",
+                    "Control * S",
+                };
+
             }
+
+            if (userPrompt.ToLower().Contains("excel"))
+            {
+                aiResponse.Explanation = "";
+                aiResponse.Combinations = new string[] {
+                    "Control + S",
+                    "Control + S",
+                    "Control + S",
+                    "Control + S",
+                    "Control + S",
+                };
+
+            }
+
+            return aiResponse;
+
         }
 
         private string ReadPrompt()
