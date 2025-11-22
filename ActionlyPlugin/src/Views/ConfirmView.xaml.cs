@@ -4,8 +4,9 @@ namespace Loupedeck.ActionlyPlugin.Views
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
-    using Loupedeck.ActionlyPlugin.Helpers.Models;
 
+    using Loupedeck.ActionlyPlugin.Helpers;
+    using Loupedeck.ActionlyPlugin.Helpers.Models;
 
     public partial class ConfirmView : UserControl
     {
@@ -24,7 +25,23 @@ namespace Loupedeck.ActionlyPlugin.Views
 
         private void Confirm_Click(Object sender, RoutedEventArgs e)
         {
-            // TODO!
+            var win = Window.GetWindow(this) as PopUpWindow;
+            PluginLog.Info("Confirm_Click triggered in ConfirmView.");
+            win.DialogResult = true;
+            win.Close();
+        }
+
+        private void Cancel_Click(Object sender, RoutedEventArgs e)
+        {
+            PluginLog.Info("Cancel_Click triggered in ConfirmView.");
+            var win = Window.GetWindow(this);
+
+            if (win != null)
+            {
+                AIResponseStore.Instance.Set(null);
+                win.DialogResult = false;
+                win.Close();
+            }
         }
     }
 }
