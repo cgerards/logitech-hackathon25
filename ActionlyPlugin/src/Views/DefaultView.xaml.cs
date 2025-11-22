@@ -16,7 +16,8 @@ namespace Loupedeck.ActionlyPlugin.Views
 
         private void InnerInputTextBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            // If Enter is pressed without Shift, submit. If Shift+Enter, insert newline.
+            if (e.Key == Key.Enter && (Keyboard.Modifiers & ModifierKeys.Shift) == 0)
             {
                 this.SubmitRequested?.Invoke(this, EventArgs.Empty);
                 e.Handled = true;
