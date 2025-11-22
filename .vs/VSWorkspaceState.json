@@ -1,8 +1,11 @@
 {
   "ExpandedNodes": [
     "",
-    "\\ExamplePlugin"
+    "\\ActionlyPlugin",
+    "\\ActionlyPlugin\\src",
+    "\\ActionlyPlugin\\src\\Actions",
+    "\\ActionlyPlugin\\src\\Helpers"
   ],
-  "SelectedNode": "\\ExamplePlugin\\ExamplePlugin.sln",
+  "SelectedNode": "\\ActionlyPlugin\\src\\Helpers\\Neue Datei",
   "PreviewInSolutionExplorer": false
 }
