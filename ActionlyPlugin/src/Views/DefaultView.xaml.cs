@@ -4,6 +4,7 @@ namespace Loupedeck.ActionlyPlugin.Views
     using System.Windows.Controls;
     using System.Windows.Input;
     using System.Windows.Threading;
+    using System.Windows;
 
     public partial class DefaultView : UserControl
     {
@@ -34,6 +35,12 @@ namespace Loupedeck.ActionlyPlugin.Views
                 this.InnerInputTextBox?.Focus();
                 Keyboard.Focus(this.InnerInputTextBox);
             }));
+        }
+
+        private void SendButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Raise the same SubmitRequested event as pressing Enter
+            this.SubmitRequested?.Invoke(this, EventArgs.Empty);
         }
     }
 }

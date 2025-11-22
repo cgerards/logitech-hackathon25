@@ -15,7 +15,7 @@
 
             <TextBox x:Name="InnerInputTextBox" Grid.Column="0" MinWidth="180" Height="28" Background="#FF1E1E1E" Foreground="White" BorderBrush="#FF3E3E42" Padding="8,0" VerticalContentAlignment="Center" />
 
-            <Button Grid.Column="1" Width="32" Height="28" Margin="6,0,0,0" ToolTip="Send" Background="#FF2A8BF2" BorderBrush="#FF1F6FCF" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Button x:Name="SendButton" Grid.Column="1" Width="32" Height="28" Margin="6,0,0,0" ToolTip="Send" Background="#FF2A8BF2" BorderBrush="#FF1F6FCF" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Click="SendButton_Click">
                 <Path Data="M2,21 L23,12 L2,3 L8,12 L2,21 Z" Fill="White" Stretch="Uniform" Width="14" Height="14" RenderTransformOrigin="0.5,0.5">
                     <Path.RenderTransform>
                         <RotateTransform Angle="-35"/>
