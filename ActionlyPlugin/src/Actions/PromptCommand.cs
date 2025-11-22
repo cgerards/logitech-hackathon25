@@ -52,9 +52,8 @@ namespace Loupedeck.ActionlyPlugin
 
             CommandExecutor executor = new CommandExecutor(this.Plugin.ClientApplication);
             PluginLog.Info("Reponse: " + reponse);
-            return;
             executor.ExecuteCombination(reponse);
-                //new AIResponse(["Control + KeyG", "String>O15<", "Return", "String>=SUMME(O6:O14)<", "Return"]));
+            AIResponseStore.Instance.Set(null);
         }
 
         // This method is called when Loupedeck needs to show the command on the console or the UI.

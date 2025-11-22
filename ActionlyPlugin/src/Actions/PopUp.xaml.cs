@@ -98,7 +98,7 @@ namespace Loupedeck.ActionlyPlugin
                         try
                         {
                             this.AiResponse= await this.AiResponseTask;
-                            AIResponseStore.Instance.Set(response);
+                            AIResponseStore.Instance.Set(this.AiResponse);
                             this.Dispatcher.Invoke(() => this.SetState(PopUpState.Confirm));
 
                         }
