@@ -55,6 +55,7 @@ namespace Loupedeck.ActionlyPlugin
                 PluginLog.Info("Reponse: " + reponse);
                 executor.ExecuteCombination(reponse);
             }
+            AIResponseStore.Instance.Set(null);
         }
 
         // This method is called when Loupedeck needs to show the command on the console or the UI.

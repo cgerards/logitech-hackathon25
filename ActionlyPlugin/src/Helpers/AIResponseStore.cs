@@ -22,8 +22,8 @@
         public void Set(AIResponse response)
         {
             PluginLog.Info("SET IN STORE");
-            if (response is null)
-                throw new ArgumentNullException(nameof(response));
+            //if (response is null)
+            //    return;
 
             lock (this._sync)
             {

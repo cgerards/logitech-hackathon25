@@ -7,6 +7,7 @@
     internal class CommandExecutor
     {
         ClientApplication ClientApp;
+        int delayBetweenCommandsMs = 100;
         public CommandExecutor(ClientApplication clientApp) {
             ApplicationSwitcher.SwitchToProcess("olk");
             this.ClientApp = clientApp;
@@ -14,10 +15,10 @@
 
         public void ExecuteCombination(AIResponse aiResponse)
         {
-
+            delayBetweenCommandsMs = aiResponse.Explanation.Contains("outlook") ? 200 /*Semml TODO*/ : 100;
             foreach (var combo in aiResponse.Combinations)
             {
-                Thread.Sleep(200);
+                Thread.Sleep(delayBetweenCommandsMs);
                 PluginLog.Info($"Combination to execute: {combo}");
                 if (string.IsNullOrEmpty(combo))
                 {
