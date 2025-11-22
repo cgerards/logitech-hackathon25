@@ -3,6 +3,7 @@ namespace Loupedeck.ActionlyPlugin
     using System;
     using System.Threading.Tasks;
     using System.Windows;
+    using System.Windows.Forms;
     using System.Windows.Input;
     using System.Windows.Media.Effects;
     using System.Windows.Threading;
@@ -26,7 +27,8 @@ namespace Loupedeck.ActionlyPlugin
     {
         public String EnteredText { get; private set; }
         public PopUpState CurrentState { get; private set; } = PopUpState.Default;
-        public Task<AIResponse> AiResponse { get; set; }
+        public Task<AIResponse> AiResponseTask { get; set; }
+        public AIResponse AiResponse { get; set; }
 
         public PopUpWindow()
         {
@@ -63,8 +65,8 @@ namespace Loupedeck.ActionlyPlugin
 
                         GeminiClient aiClient = new GeminiClient();
 
-
-                        this.AiResponse = aiClient.GenerateFromTextAndImageAsync("", this.EnteredText, null);
+                        
+                        this.AiResponseTask = aiClient.GenerateFromTextAndImageAsync("", this.EnteredText);
 
                         // Switch UI to loading state while keeping the popup open.
                         SetState(PopUpState.Loading);
@@ -94,29 +96,26 @@ namespace Loupedeck.ActionlyPlugin
                     {
                         try
                         {
-                            AIResponse response = await this.AiResponse;
-                            PluginLog.Info(response.ToString());
-                            PluginLog.Info("AI Response received in PopUpWindow: " + response.Explanation);
-
+                            this.AiResponse= await this.AiResponseTask;
 
                             this.Dispatcher.Invoke(() => this.SetState(PopUpState.Confirm));
 
                         }
                         catch (Exception ex)
                         {
-                            PluginLog.Error($"Error getting AI response: {ex.Message}");
-                            this.Dispatcher.Invoke(() =>
-                            {
-                                // Fehlerbehandlung im UI
+                            PluginLog.Error($"Error getting AI response: {ex.InnerException}");
+                            this.Dispatcher.Invoke(() => this.SetState(PopUpState.Confirm));
+                            // Fehlerbehandlung im UI
                                 // z.B. zurück zum Default-State oder Fehlermeldung anzeigen
-                            });
+                            
                         }
                     });
-                    ;
                     break;
 
                 case PopUpState.Confirm:
-                    var viewConfirm = new ConfirmView();
+                    PluginLog.Info("Displaying AI Response in Confirm View." + this.AiResponse.Explanation);
+                    var viewConfirm = new ConfirmView(this.AiResponse);
+
                     ContentHost.Content = viewConfirm;
                     this.Dispatcher.BeginInvoke(new Action(() =>
                     {
@@ -126,33 +125,6 @@ namespace Loupedeck.ActionlyPlugin
 
 
                     break;
-            }
-        }
-
-        private async Task StartLoadingSequenceAsync()
-        {
-            try
-            {
-                // Give UI a moment to render the loading view
-                await Task.Delay(200);
-
-                // Simulate work for 5 seconds without blocking the UI thread
-                await Task.Delay(5000);
-
-                // Only transition if still in Loading state (user may have closed or changed state)
-                if (this.CurrentState == PopUpState.Loading)
-                {
-                    // Ensure state transition happens on UI thread
-                    this.Dispatcher.Invoke(() => this.SetState(PopUpState.Confirm));
-                }
-            }
-            catch (TaskCanceledException)
-            {
-                // ignore cancellation if any
-            }
-            catch (Exception ex)
-            {
-                PluginLog.Error($"Error during loading sequence: {ex}");
             }
         }
 

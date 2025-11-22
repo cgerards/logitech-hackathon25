@@ -20,7 +20,7 @@
         {
             //this.Plugin.ClientApplication.SendKeyboardShortcut(VirtualKeyCode.KeyV, ModifierKey.Control | ModifierKey.Shift);
 
-            this.ExecuteCombination(new AIResponse(["Control + KeyG", "String>O15<", "Return" , "String>=SUMME(O6:O14)<"]));
+            this.ExecuteCombination(new AIResponse());
 
             PluginLog.Info($"Now return&tab");
 

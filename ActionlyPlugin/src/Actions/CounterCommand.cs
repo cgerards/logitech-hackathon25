@@ -24,7 +24,7 @@ namespace Loupedeck.ActionlyPlugin
             var http = new GeminiClient();
             PluginLog.Info("LLM Response on the wa.");
 
-            var test = await http.GenerateFromTextAndImageAsync("Hilf dem User", "Was ist auf dem Bild zu sehen?", "C:\\Users\\Lenovo\\AppData\\Local\\Logi\\LogiPluginService\\PluginData\\Actionly\\bild.png");
+            var test = await http.GenerateFromTextAndImageAsync("Hilf dem User", "Was ist auf dem Bild zu sehen?");
 
             PluginLog.Info("LLM Response received." + test);
             PluginLog.Info("LLM Request sent.");

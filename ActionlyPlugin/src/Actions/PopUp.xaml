@@ -33,7 +33,10 @@
             </Button>
 
 			<!-- Dynamic UI region -->
-			<ContentControl x:Name="ContentHost" Grid.Row="1" Margin="6,6,6,6"/>
+            <ContentControl x:Name="ContentHost" Grid.Row="1" Margin="6,6,6,6">
+                <TextBlock Text="{Binding Response.Explanation}" />
+            </ContentControl>
+
         </Grid>
     </Border>
 </Window>

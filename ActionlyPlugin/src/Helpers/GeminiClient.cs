@@ -9,6 +9,7 @@
     using Google.GenAI.Types;
 
     using Loupedeck.ActionlyPlugin.Helpers.Models;
+    using System.Reflection;
 
     public class GeminiClient
     {
@@ -19,7 +20,7 @@
         /// <summary>
         /// Sendet system prompt, user prompt und ein Bild (lokaler Pfad) an Gemini und gibt den Text der Antwort zurück.
         /// </summary>
-        public async Task<AIResponse> GenerateFromTextAndImageAsync(string systemPrompt, string userPrompt, string imagePath)
+        public async Task<AIResponse> GenerateFromTextAndImageAsync(string systemPrompt, string userPrompt)
         {
 
             //  Gemini Developer API
@@ -50,6 +51,10 @@
                 // Define a generation config
                 GenerateContentConfig config = new()
                 {
+                    HttpOptions = new HttpOptions
+                    {
+                        Timeout = 120000
+                    },
                     ResponseSchema = countryInfo,
                     ResponseMimeType = "application/json",
                     SystemInstruction = new Content
@@ -60,17 +65,28 @@
                     },
                     MaxOutputTokens = 5000,
                     Temperature = 1,
+                    TopP = 0.8,
+                    TopK = 40,
                 };
 
                 var contents = new List<Content>();
-
-                contents.Add(new Content
+                try
                 {
-                    Role = "system",
-                    Parts = [
-                          new Part { Text = "I am a really helpful assistant for excel spreadsheets." }
-                    ]
-                });
+                    string prompt = Prompt.TEXT;
+                    contents.Add(new Content
+                    {
+                        Role = "system",
+                        Parts = [
+          new Part { Text = prompt}
+    ]
+                    });
+
+                }
+                catch (Exception ex)
+                {
+                    PluginLog.Info("Could not read prompt.txt, using default prompt. " + ex.Message);
+                }
+                
 
                 contents.Add(new Content
                 {
@@ -79,16 +95,20 @@
                           new Part { Text = userPrompt }
                     ]
                 });
-
-
-                byte[] imageBytes = File.ReadAllBytes("C:\\Users\\Lenovo\\Pictures\\Screenshots\\screen.png");
-
-
-
-                contents.Add(new Content
+                
+                try
                 {
-                    Parts = [
-                          new Part
+                    
+                    ScreenshotHelper.TakeScreenshot();
+
+                    byte[] imageBytes = File.ReadAllBytes(ScreenshotHelper.ScreenshotPath);
+
+
+
+                    contents.Add(new Content
+                    {
+                        Parts = [
+                              new Part
           {
               InlineData = new Google.GenAI.Types.Blob
               {
@@ -96,10 +116,17 @@
                   Data = imageBytes
               }
           }
-                          ]
-                });
+                              ]
+                    });
+                }
+                catch (Exception ex)
+                {
+                    PluginLog.Error("Could not read screenshot image, proceeding without image. " + ex.Message);
+                    return null;
+                }
+                
 
-
+                PluginLog.Info("Before response");
 
                 var response = await client.Models.GenerateContentAsync(
                      model: "gemini-3-pro-preview",
@@ -107,8 +134,7 @@
                      config: config);
 
 
-                Console.WriteLine(response);
-                Console.WriteLine(response.Candidates[0].Content.Parts[0].Text);
+                PluginLog.Info(response.Candidates[0].Content.Parts[0].Text);
                 var responseString = response.Candidates[0].Content.Parts[0].Text;
 
                 PluginLog.Info(responseString);
@@ -118,12 +144,27 @@
                 PluginLog.Info("Explanation: " + aiResponse.Explanation);
 
                 return aiResponse;
+
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error during content generation: {ex.Message}\n\n {ex.InnerException}");
                 return null;
             }
+        }
+
+        private string ReadPrompt()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+
+            // Namespace + Dateiname → sehr wichtig!
+            string resourceName = "Loupedeck.ActionlyPlugin.Helpers.prompt.txt";
+
+            using Stream stream = assembly.GetManifestResourceStream(resourceName)
+                ?? throw new Exception("Resource nicht gefunden!");
+
+            using StreamReader reader = new StreamReader(stream);
+            return reader.ReadToEnd();
         }
     }
 }
