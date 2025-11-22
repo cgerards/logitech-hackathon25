@@ -1,6 +1,7 @@
 namespace Loupedeck.ActionlyPlugin
 {
     using System;
+    using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Input;
     using System.Windows.Media.Effects;
@@ -12,8 +13,6 @@ namespace Loupedeck.ActionlyPlugin
     public enum PopUpState
     {
         Default,
-        Error,
-        Warning,
         Confirm,
         Loading
     }
@@ -78,8 +77,49 @@ namespace Loupedeck.ActionlyPlugin
                     {
                         AdjustWindowSize();
                         // If LoadingView exposes FocusInput, call it
+
+                    }), DispatcherPriority.Loaded);
+
+                    // Start non-blocking loading sequence that transitions to Confirm after delay
+                    _ = StartLoadingSequenceAsync();
+                    break;
+
+                case PopUpState.Confirm:
+                    var viewConfirm = new ConfirmView();
+                    ContentHost.Content = viewConfirm;
+                    this.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        AdjustWindowSize();
+                        // If LoadingView exposes FocusInput, call it
                     }), DispatcherPriority.Loaded);
                     break;
+            }
+        }
+
+        private async Task StartLoadingSequenceAsync()
+        {
+            try
+            {
+                // Give UI a moment to render the loading view
+                await Task.Delay(200);
+
+                // Simulate work for 5 seconds without blocking the UI thread
+                await Task.Delay(5000);
+
+                // Only transition if still in Loading state (user may have closed or changed state)
+                if (this.CurrentState == PopUpState.Loading)
+                {
+                    // Ensure state transition happens on UI thread
+                    this.Dispatcher.Invoke(() => this.SetState(PopUpState.Confirm));
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                // ignore cancellation if any
+            }
+            catch (Exception ex)
+            {
+                PluginLog.Error($"Error during loading sequence: {ex}");
             }
         }
 
