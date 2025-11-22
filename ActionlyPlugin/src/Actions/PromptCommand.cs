@@ -7,13 +7,14 @@ namespace Loupedeck.ActionlyPlugin
 
     // This class implements an example command that counts button presses.
 
-    public class PromptCommand : PluginDynamicCommand
+    public class PromptCommand : PluginMultistateDynamicCommand
     {
 
         // Initializes the command class.
         public PromptCommand()
             : base(displayName: "Test", description: "Test description", groupName: "Commands")
         {
+            this.AddState("Prompt", "Initiate Prompt Session");
         }
 
         // This method is called when the user executes the command.
