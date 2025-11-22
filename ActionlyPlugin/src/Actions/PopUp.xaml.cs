@@ -1,16 +1,17 @@
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media.Effects;
-
 namespace Loupedeck.ExamplePlugin
 {
+    using System.Windows;
+    using System.Windows.Input;
+    using System.Windows.Media.Effects;
+    using Loupedeck.ActionlyPlugin;
+
     public partial class PopUpWindow : Window
     {
-        public string EnteredText { get; private set; }
+        public String EnteredText { get; private set; }
 
         public PopUpWindow()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             // Create a simple drop shadow resource in code-behind so the XAML can reference it.
             var dropShadow = new DropShadowEffect
@@ -24,25 +25,23 @@ namespace Loupedeck.ExamplePlugin
             this.Resources["_DropShadow"] = dropShadow;
         }
 
-        private void Close_Click(object sender, RoutedEventArgs e)
+        private void Close_Click(Object sender, RoutedEventArgs e)
         {
             this.DialogResult = false;
             this.Close();
         }
 
-        private void Ok_Click(object sender, RoutedEventArgs e)
+        private void Ok_Click(Object sender, RoutedEventArgs e)
         {
-            this.EnteredText = this.InputTextBox?.Text ?? string.Empty;
+            this.EnteredText = this.InputTextBox?.Text ?? String.Empty;
             this.DialogResult = true;
             this.Close();
+            PluginLog.Info($"Prompt value is {this.EnteredText}");
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            this.InputTextBox?.Focus();
-        }
+        private void Window_Loaded(Object sender, RoutedEventArgs e) => this.InputTextBox?.Focus();
 
-        private void InputTextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void InputTextBox_KeyDown(Object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
