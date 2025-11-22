@@ -202,15 +202,24 @@
 
             if (userPrompt.ToLower().Contains("excel"))
             {
-                aiResponse.Explanation = "";
-                aiResponse.Combinations = new string[] {
-                    "Control + S",
-                    "Control + S",
-                    "Control + S",
-                    "Control + S",
-                    "Control + S",
-                };
-
+                aiResponse.Explanation = "Based on the goal, I will navigate to the first empty row in the Excel list (Row 5), input the data extracted from the PDF (Year: 2025, Revenue: 124, Profit: 42, Cost: 82 (calculated as 124-42), Employees: 295). Then, I will use the 'Refresh All' shortcut to update the pivot table with the new data and switch to the 'Visualization' sheet.";
+                aiResponse.Combinations = [
+                    "Control + Home",
+                    "Control + ArrowDown",
+                    "ArrowDown",
+                    "String>2025<",
+                    "Tab",
+                    "String>124<",
+                    "Tab",
+                    "String>42<",
+                    "Tab",
+                    "String>82<",
+                    "Tab",
+                    "String>295<",
+                    "Return",
+                    "Control + Alt + F5",
+                    "Control + PageDown"
+                  ];
             }
 
             return aiResponse;
