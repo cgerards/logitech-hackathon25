@@ -8,17 +8,20 @@
     internal class CommandExecutor
     {
         ClientApplication ClientApp;
-        public CommandExecutor(ClientApplication clientApp) {
-            ApplicationSwitcher.SwitchToProcess("olk");
+        AIResponse AIResponse;
+        int delayBetweenCommandsMs;
+        public CommandExecutor(ClientApplication clientApp, AIResponse aiResponse) {
+            this.AIResponse = aiResponse;
+            ApplicationSwitcher.SwitchToProcess(this.AIResponse.Explanation.Contains("outlook") ? "olk" : "excel");
+            this.delayBetweenCommandsMs = aiResponse.Explanation.Contains("outlook") ? 200 /*Semml TODO*/ : 100;
             this.ClientApp = clientApp;
         }
 
-        public void ExecuteCombination(AIResponse aiResponse)
+        public void ExecuteCombination()
         {
-            Thread.Sleep(2000);
-            foreach (var combo in aiResponse.Combinations)
+            foreach (var combo in this.AIResponse.Combinations)
             {
-                Thread.Sleep(200);
+                Thread.Sleep(this.delayBetweenCommandsMs);
                 PluginLog.Info($"Combination to execute: {combo}");
                 if (string.IsNullOrEmpty(combo))
                 {

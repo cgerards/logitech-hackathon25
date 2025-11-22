@@ -157,6 +157,8 @@ namespace Loupedeck.ActionlyPlugin
 
         private void Close_Click(Object sender, RoutedEventArgs e)
         {
+            AIResponseStore.Instance.Set(null);
+            PluginLog.Info("PopUpWindow closed by user.");
             this.DialogResult = false;
             this.Close();
         }

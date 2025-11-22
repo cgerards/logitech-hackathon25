@@ -16,8 +16,19 @@ namespace Loupedeck.ActionlyPlugin
         {
         }
 
+        // init haptics
+        protected override Boolean OnLoad()
+        {
+            this.Plugin.PluginEvents.AddEvent("ringing", "Play Ringing Haptic", "Description");
+            return true;
+        }
+
         protected override void RunCommand(string actionParameter)
         {
+
+            // execute Haptic
+            this.Plugin.PluginEvents.RaiseEvent("ringing");
+
             try
             {
                 bool success = ApplicationSwitcher.SwitchToProcess("firefox");

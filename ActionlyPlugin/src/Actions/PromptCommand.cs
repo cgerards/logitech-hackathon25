@@ -15,9 +15,15 @@ namespace Loupedeck.ActionlyPlugin
 
         // Initializes the command class.
         public PromptCommand()
-            : base(displayName: "Test", description: "Test description", groupName: "Commands")
+            : base(displayName: "Actionly", description: "Your AI Agent right in all MX-Master Mice!", groupName: "Commands")
         {
-            this.AddState("Prompt", "Initiate Prompt Session");
+            this.AddState("Unleash the power of your MX Master with the seamless AI Agent!", "Initiate Prompt Session");
+        }
+
+        protected override Boolean OnLoad()
+        {
+            this.Plugin.PluginEvents.AddEvent("ringing", "Play Ringing Haptic", "Description");
+            return true;
         }
 
         // This method is called when the user executes the command.
@@ -48,13 +54,15 @@ namespace Loupedeck.ActionlyPlugin
                 return popup;
             });
 
-            AIResponse reponse = AIResponseStore.Instance.Get();
-            if (reponse != null)
+            AIResponse response = AIResponseStore.Instance.Get();
+            if (response != null)
             {
-                CommandExecutor executor = new CommandExecutor(this.Plugin.ClientApplication);
-                PluginLog.Info("Reponse: " + reponse);
-                executor.ExecuteCombination(reponse);
+                CommandExecutor executor = new CommandExecutor(this.Plugin.ClientApplication, response);
+                PluginLog.Info("Reponse: " + response);
+                executor.ExecuteCombination();
+                this.Plugin.PluginEvents.RaiseEvent("ringing");
             }
+            AIResponseStore.Instance.Set(null);
         }
 
         // This method is called when Loupedeck needs to show the command on the console or the UI.
