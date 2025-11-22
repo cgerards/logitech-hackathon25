@@ -7,6 +7,7 @@
 
     using Google.GenAI;
     using Google.GenAI.Types;
+    using System.IO;
 
     using Loupedeck.ActionlyPlugin.Helpers.Models;
 
