@@ -1,7 +1,6 @@
 ﻿namespace Loupedeck.ActionlyPlugin.Helpers
 {
     using System;
-    using System.Windows.Media.Media3D;
 
     using Loupedeck.ActionlyPlugin.Helpers.Models;
 
@@ -12,13 +11,14 @@
         int delayBetweenCommandsMs;
         public CommandExecutor(ClientApplication clientApp, AIResponse aiResponse) {
             this.AIResponse = aiResponse;
-            ApplicationSwitcher.SwitchToProcess(this.AIResponse.Explanation.Contains("outlook") ? "olk" : "excel");
-            this.delayBetweenCommandsMs = aiResponse.Explanation.Contains("outlook") ? 200 /*Semml TODO*/ : 100;
+            ApplicationSwitcher.SwitchToProcess(this.AIResponse.Explanation.ToLower().Contains("outlook") ? "olk" : "excel");
+            this.delayBetweenCommandsMs = aiResponse.Explanation.ToLower().Contains("outlook") ? 100 /*Semml TODO*/ : 100;
             this.ClientApp = clientApp;
         }
 
         public void ExecuteCombination()
         {
+            Thread.Sleep(1000);
             foreach (var combo in this.AIResponse.Combinations)
             {
                 Thread.Sleep(this.delayBetweenCommandsMs);
@@ -31,10 +31,10 @@
                 if (combo.Equals("Wait"))
                 {
                     PluginLog.Info(combo + " — waiting 3 seconds");
-                    Thread.Sleep(3000);
+                    Thread.Sleep(1500);
                     continue;
                 }
-                
+
                 const string prefix = "String>";
                 if (combo.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) && combo.EndsWith("<", StringComparison.Ordinal))
                 {
