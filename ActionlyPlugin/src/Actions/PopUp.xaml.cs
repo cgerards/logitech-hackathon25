@@ -21,8 +21,6 @@ namespace Loupedeck.ActionlyPlugin
         Loading
     }
 
-
-
     public partial class PopUpWindow : Window
     {
         public String EnteredText { get; private set; }
@@ -65,10 +63,10 @@ namespace Loupedeck.ActionlyPlugin
                         PluginLog.Info($"Prompt value is {this.EnteredText}");
                         try
                         {
-                        GeminiClient aiClient = new GeminiClient();
+                            GeminiClient aiClient = new GeminiClient();
 
-                        
-                        this.AiResponseTask = aiClient.GenerateFromTextAndImageAsync("", this.EnteredText);
+
+                            this.AiResponseTask = aiClient.GenerateFromTextAndImageAsync("", this.EnteredText);
 
                         }
                         catch (Exception ex)
@@ -96,28 +94,24 @@ namespace Loupedeck.ActionlyPlugin
                     this.Dispatcher.BeginInvoke(new Action(async () =>
                     {
                         AdjustWindowSize();
-                        // If LoadingView exposes FocusInput, call it
+                        // If LoadingView exposes FocusInput, call it
 
-                    }), DispatcherPriority.Loaded);
+                    }), DispatcherPriority.Loaded);
 
-                    // Start non-blocking loading sequence that transitions to Confirm after delay
-                    _ = Task.Run(async () =>
+                    // Start non-blocking loading sequence that transitions to Confirm after delay
+                    _ = Task.Run(async () =>
                     {
                         try
                         {
                             this.AiResponse = await this.AiResponseTask;
                             AIResponseStore.Instance.Set(this.AiResponse);
-Â  Â  Â  Â  Â  Â  Â  Â  Â  Â  Â  Â  Â  Â  // Erfolgreiche RÃ¼ckkehr, zur BestÃ¤tigungsansicht wechseln (im UI-Thread)
                             this.Dispatcher.Invoke(() => this.SetState(PopUpState.Confirm));
 
                         }
                         catch (Exception ex)
                         {
-                            PluginLog.Error($"Error getting AI response: {ex.InnerException}");
-                            this.Dispatcher.Invoke(() => this.SetState(PopUpState.Confirm));
-                            // Fehlerbehandlung im UI
-                                // z.B. zurück zum Default-State oder Fehlermeldung anzeigen
-                            
+                            PluginLog.Error($"Error getting AI response: {ex.InnerException ?? ex}");
+                            this.Dispatcher.Invoke(() => this.OnError());
                         }
                     });
                     break;
@@ -216,7 +210,7 @@ namespace Loupedeck.ActionlyPlugin
                 catch (Exception startEx)
                 {
                     PluginLog.Error(startEx, $"Failed to open log file: {logPath}");
-                    MessageBox.Show($"Konnte Log-Datei nicht Ã¶ffnen:{Environment.NewLine}{startEx.Message}", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Konnte Log-Datei nicht öffnen:{Environment.NewLine}{startEx.Message}", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             this.Close_Click(null, null);

@@ -34,7 +34,7 @@
                     Thread.Sleep(3000);
                     continue;
                 }
-                
+
                 const string prefix = "String>";
                 if (combo.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) && combo.EndsWith("<", StringComparison.Ordinal))
                 {

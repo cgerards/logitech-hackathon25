@@ -11,7 +11,6 @@
     using Google.GenAI.Types;
 
     using Loupedeck.ActionlyPlugin.Helpers.Models;
-    using System.Reflection;
 
     public class GeminiClient
     {
@@ -37,19 +36,19 @@
                 Schema countryInfo = new()
                 {
                     Properties = new Dictionary<string, Schema>
-          {
+                    {
                         {
-            "Explanation", new Schema { Type = Google.GenAI.Types.Type.STRING, Title = "Explanation" }
-          },
-          {
+                            "Explanation", new Schema { Type = Google.GenAI.Types.Type.STRING, Title = "Explanation" }
+                        },
+                        {
                             "Combinations", new Schema
                             {
                                 Type = Google.GenAI.Types.Type.ARRAY,
-                Title = "Combinations",
+                                Title = "Combinations",
                                 Items = new Schema { Type = Google.GenAI.Types.Type.STRING },
-            }
-          }
-    },
+                            }
+                        }
+                    },
                     PropertyOrdering = ["Explanation", "Combinations"],
                     Required = ["Explanation", "Combinations"],
                     Title = "CountryInfo",
@@ -94,49 +93,44 @@
                         Parts =
                         [
                             new Part { Text = prompt }
-    ]
+                        ]
                     });
-
                 }
                 catch (Exception ex)
                 {
                     // Assuming PluginLog is available
                     // PluginLog.Info("Could not read prompt.txt, using default prompt. " + ex.Message);
                 }
-                
+
                 // Add User Prompt
                 contents.Add(new Content
                 {
                     Role = "user",
                     Parts =
                     [
-                          new Part { Text = userPrompt }
+                        new Part { Text = userPrompt }
                     ]
                 });
-                
+
                 // Add Screenshot Image
                 try
                 {
-                    
                     ScreenshotHelper.TakeScreenshot();
-
                     byte[] imageBytes = File.ReadAllBytes(ScreenshotHelper.ScreenshotPath);
-
-
 
                     contents.Add(new Content
                     {
                         Parts =
                         [
-                              new Part
-          {
-              InlineData = new Google.GenAI.Types.Blob
-              {
-                  MimeType = "image/png",
-                  Data = imageBytes
-              }
-          }
-                              ]
+                            new Part
+                            {
+                                InlineData = new Google.GenAI.Types.Blob
+                                {
+                                    MimeType = "image/png",
+                                    Data = imageBytes
+                                }
+                            }
+                        ]
                     });
                 }
                 catch (Exception ex)
@@ -145,14 +139,14 @@
                     // PluginLog.Error("Could not read screenshot image, proceeding without image. " + ex.Message);
                     throw new InvalidOperationException("AI response is null after generation.");
                 }
-                
+
 
                 // PluginLog.Info("Before response");
 
                 var response = await client.Models.GenerateContentAsync(
-                     model: "gemini-3-pro",
-                     contents: contents,
-                     config: config);
+                    model: "gemini-3-pro",
+                    contents: contents,
+                    config: config);
 
                 // PluginLog.Info("Response finished");
 
@@ -167,17 +161,12 @@
 
                 return aiResponse;
 
-                };
-
             }
             catch (Exception ex)
             {
                 // PluginLog.Error("Error during Gemini API call: " + ex.Message);
                 throw ex;
             }
-
-            return aiResponse;
-
         }
 
         private string ReadPrompt()
