@@ -24,7 +24,7 @@
         /// <param name="systemPrompt">Der Prompt, der das Verhalten des Modells steuert (wird hier überschrieben).</param>
         /// <param name="userPrompt">Die spezifische Anfrage des Benutzers.</param>
         /// <returns>Die deserialisierte KI-Antwort (AIResponse).</returns>
-        public async Task<AIResponse> GenerateFromTextAndImageAsync(string systemPrompt, string userPrompt)
+        public async Task<AIResponse> GenerateFromTextAndImageAsync(string apiKey, string userPrompt, string model)
         {
 
             //  Gemini Developer API
@@ -126,14 +126,14 @@
                                   }
                               }
                               ]
-                    });
-                }
-                catch (Exception ex)
-                {
-                    // Assuming PluginLog is available
-                    // PluginLog.Error("Could not read screenshot image, proceeding without image. " + ex.Message);
-                    throw new InvalidOperationException("AI response is null after generation.");
-                }
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        // Assuming PluginLog is available
+                        // PluginLog.Error("Could not read screenshot image, proceeding without image. " + ex.Message);
+                        throw new InvalidOperationException("AI response is null after generation.");
+                    }
 
 
                     PluginLog.Info("Using model " + model);
@@ -152,17 +152,18 @@
 
                     AIResponse aiResponse = JsonSerializer.Deserialize<AIResponse>(responseString);
 
-                // PluginLog.Info("Explanation: " + aiResponse.Explanation);
+                    // PluginLog.Info("Explanation: " + aiResponse.Explanation);
 
-                return aiResponse;
-            }
+                    return aiResponse;
+                }
 
+                catch (Exception ex)
+                {
+                    // PluginLog.Error("Error during Gemini API call: " + ex.Message);
+                    throw ex;
+                }
             }
-            catch (Exception ex)
-            {
-                // PluginLog.Error("Error during Gemini API call: " + ex.Message);
-                throw ex;
-            }
+            return null;
         }
 
 

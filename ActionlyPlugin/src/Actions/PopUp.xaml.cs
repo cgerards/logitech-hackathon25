@@ -1,6 +1,8 @@
 namespace Loupedeck.ActionlyPlugin
 {
     using System;
+    using System.Diagnostics;
+    using System.IO;
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Media.Effects;
@@ -68,10 +70,11 @@ namespace Loupedeck.ActionlyPlugin
                         PluginLog.Info($"Prompt value is {this.EnteredText}");
                         try
                         {
+                            LoadSettings();
                             GeminiClient aiClient = new GeminiClient();
 
 
-                            this.AiResponseTask = aiClient.GenerateFromTextAndImageAsync("", this.EnteredText);
+                            this.AiResponseTask = aiClient.GenerateFromTextAndImageAsync(this.ApiKey, this.EnteredText, this.Model);
 
                         }
                         catch (Exception ex)
@@ -164,6 +167,36 @@ namespace Loupedeck.ActionlyPlugin
                 //        }
                 //    });
                 //    break;
+
+                case PopUpState.Settings:
+                    PluginLog.Info("Setting opöen");
+                    var viewSett = new SettingsView(this.PluginPath);
+                    ContentHost.Content = viewSett;
+
+                    viewSett.CloseRequested += (s, e) =>
+                    {
+                        PluginLog.Info("Settings view requested close.");
+                        // Return to Default view after closing settings
+                        SetState(PopUpState.Default);
+                    };
+
+                    viewSett.SubmitRequested += (s, e) =>
+                    {
+                        PluginLog.Info("Settings view submitted.");
+                        // Return to Default view after submitting settings
+                        SetState(PopUpState.Default);
+                    };
+
+                    this.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        AdjustWindowSize();
+                        // If LoadingView exposes FocusInput, call it
+                    }), DispatcherPriority.Loaded);
+
+
+                    break;
+
+
                 case PopUpState.Confirm:
                     PluginLog.Info("Displaying AI Response in Confirm View." + this.AiResponse.Explanation);
                     var viewConfirm = new ConfirmView(this.AiResponse);
