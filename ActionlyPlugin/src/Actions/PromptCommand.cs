@@ -29,10 +29,11 @@ namespace Loupedeck.ActionlyPlugin
         // This method is called when the user executes the command.
         protected override void RunCommand(String actionParameter)
         {
+            var path = this.Plugin.GetPluginDataDirectory();
             WpfPopupHost.ShowDialogAndReturn(() =>
             {
-
-                var popup = new PopUpWindow();
+                
+                var popup = new PopUpWindow(path);
 
                 // Place popup near mouse as a reasonable default
                 var mousePos = Control.MousePosition;

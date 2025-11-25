@@ -35,8 +35,11 @@ namespace Loupedeck.ActionlyPlugin.Views
         }
 
         public event EventHandler SubmitRequested;
+        public event EventHandler SettingsRequested;
+
 
         public string Text => this.InnerInputTextBox?.Text ?? string.Empty;
+
 
         public void FocusInput()
         {
@@ -53,5 +56,19 @@ namespace Loupedeck.ActionlyPlugin.Views
             // Raise the same SubmitRequested event as pressing Enter
             this.SubmitRequested?.Invoke(this, EventArgs.Empty);
         }
+
+        private void MyComboBox_SelectionChanged(Object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.SettingsRequested?.Invoke(this, EventArgs.Empty);
+        }
+
+
+
     }
+
 }

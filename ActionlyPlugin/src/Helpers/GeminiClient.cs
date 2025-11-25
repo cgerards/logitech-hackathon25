@@ -19,11 +19,13 @@
         /// <summary>
         /// Sendet system prompt, user prompt und ein Bild (lokaler Pfad) an Gemini und gibt den Text der Antwort zurück.
         /// </summary>
-        public async Task<AIResponse> GenerateFromTextAndImageAsync(string systemPrompt, string userPrompt)
+        public async Task<AIResponse> GenerateFromTextAndImageAsync(string apiKey, string userPrompt, string model)
         {
-            /*
+
             //  Gemini Developer API
-            var client = new Client(apiKey: "AIzaSyCJGcQzSHRi-_jfCGlFxdGYhBDoQNTXDog");
+            var client = new Client(apiKey: apiKey);
+
+            PluginLog.Info("Starting Gemini API call" + apiKey);
 
             try
             {
@@ -31,16 +33,16 @@
                 Schema countryInfo = new()
                 {
                     Properties = new Dictionary<string, Schema> {
-          {
-            "Explanation", new Schema { Type = Google.GenAI.Types.Type.STRING, Title = "Explanation" }
-          },
-          {
-            "Combinations", new Schema { Type = Google.GenAI.Types.Type.ARRAY,
-                Title = "Combinations",
-            Items = new Schema{ Type = Google.GenAI.Types.Type.STRING},
-            }
-          }
-    },
+                        {
+                            "Explanation", new Schema { Type = Google.GenAI.Types.Type.STRING, Title = "Explanation" }
+                        },
+                        {
+                            "Combinations", new Schema { Type = Google.GenAI.Types.Type.ARRAY,
+                                Title = "Combinations",
+                                Items = new Schema{ Type = Google.GenAI.Types.Type.STRING},
+                            }
+                        }
+                    },
                     PropertyOrdering = ["Explanation", "Combinations"],
                     Required = ["Explanation", "Combinations"],
                     Title = "CountryInfo",
@@ -74,10 +76,10 @@
                     string prompt = Prompt.TEXT;
                     contents.Add(new Content
                     {
-                        Role = "system",
+                        Role = "model",
                         Parts = [
-          new Part { Text = prompt}
-    ]
+                            new Part { Text = prompt}
+                            ]
                     });
 
                 }
@@ -85,7 +87,7 @@
                 {
                     PluginLog.Info("Could not read prompt.txt, using default prompt. " + ex.Message);
                 }
-                
+
 
                 contents.Add(new Content
                 {
@@ -94,10 +96,10 @@
                           new Part { Text = userPrompt }
                     ]
                 });
-                
+
                 try
                 {
-                    
+
                     ScreenshotHelper.TakeScreenshot();
 
                     byte[] imageBytes = File.ReadAllBytes(ScreenshotHelper.ScreenshotPath);
@@ -108,13 +110,13 @@
                     {
                         Parts = [
                               new Part
-          {
-              InlineData = new Google.GenAI.Types.Blob
-              {
-                  MimeType = "image/png",
-                  Data = imageBytes
-              }
-          }
+                              {
+                                  InlineData = new Google.GenAI.Types.Blob
+                                  {
+                                      MimeType = "image/png",
+                                      Data = imageBytes
+                                  }
+                              }
                               ]
                     });
                 }
@@ -123,12 +125,12 @@
                     PluginLog.Error("Could not read screenshot image, proceeding without image. " + ex.Message);
                     return null;
                 }
-                
 
-                PluginLog.Info("Before response");
+                
+                PluginLog.Info("Using model " + model);
 
                 var response = await client.Models.GenerateContentAsync(
-                     model: "gemini-3-pro",
+                     model: model,
                      contents: contents,
                      config: config);
 
@@ -142,7 +144,7 @@
                 AIResponse aiResponse = JsonSerializer.Deserialize<AIResponse>(responseString);
 
                 PluginLog.Info("Explanation: " + aiResponse.Explanation);
-                */
+                /*
             var aiResponse = new AIResponse
             {
                 Explanation = "This is a placeholder explanation.",
@@ -223,11 +225,19 @@
                     "Control + Alt + F5",
                     "Control + PageDown"
                   ];
+            }*/
+
+                return aiResponse;
+
             }
-
-            return aiResponse;
-
+            catch (Exception ex)
+            {
+                PluginLog.Error("Error during Gemini API call: " + ex.Message);
+                return null;
+            }
         }
+
+
 
         private string ReadPrompt()
         {

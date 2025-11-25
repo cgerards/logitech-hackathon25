@@ -9,10 +9,11 @@
         ClientApplication ClientApp;
         AIResponse AIResponse;
         int delayBetweenCommandsMs;
-        public CommandExecutor(ClientApplication clientApp, AIResponse aiResponse) {
+        public CommandExecutor(ClientApplication clientApp, AIResponse aiResponse)
+        {
             this.AIResponse = aiResponse;
-            ApplicationSwitcher.SwitchToProcess(this.AIResponse.Explanation.ToLower().Contains("outlook") ? "olk" : "excel");
-            this.delayBetweenCommandsMs = aiResponse.Explanation.ToLower().Contains("outlook") ? 100 /*Semml TODO*/ : 100;
+            //ApplicationSwitcher.SwitchToProcess("excel");
+            this.delayBetweenCommandsMs = aiResponse.Explanation.ToLower().Contains("outlook") ? 300 /*Semml TODO*/ : 300;
             this.ClientApp = clientApp;
         }
 
@@ -69,6 +70,7 @@
                 {
                     PluginLog.Info($"Parsed key: {parsedKey} with modifiers {mods}");
                     // Einmalig senden: VirtualKey + alle gesammelten Modifier
+
                     this.ClientApp.SendKeyboardShortcut(parsedKey, mods);
                 }
 

@@ -12,8 +12,9 @@ None, LeftButton, RightButton, Break, MiddleButton, XButton1, XButton2, Back, Ta
 
 For combining KeyCodes use this pattern:
 KeyCode1 + KeyCode2 + ... + KeyCodeN
-
-If the user wants to enter text, represent the text input as a KeyCombination, formatted as : String>TextInput<
+If the user wants to enter text, represent the text input as a KeyCombination, formatted as String>TextInput<
+Use exactly the keycodes provided before. It is crucial that you do not invent or assume the existence of any other key codes.
+If you want to press Letters, the corresponding KeyCodes are KeyA to KeyZ.
 
 Follow these rules:
 
