@@ -3,7 +3,6 @@ namespace Loupedeck.ActionlyPlugin
     using System;
     using System.Windows;
     using System.Windows.Forms;
-    using System.Windows.Media;
 
     using Loupedeck.ActionlyPlugin.Helpers;
     using Loupedeck.ActionlyPlugin.Helpers.Models;

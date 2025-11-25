@@ -1,10 +1,6 @@
 ﻿namespace Loupedeck.ActionlyPlugin.Helpers
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     using Loupedeck.ActionlyPlugin.Helpers.Models;
 
@@ -21,7 +17,7 @@
         // Setzt die AIResponse; überschreibt vorhandene Werte
         public void Set(AIResponse response)
         {
-            PluginLog.Info("SET IN STORE");
+            //PluginLog.Info("SET IN STORE");
             //if (response is null)
             //    return;
 

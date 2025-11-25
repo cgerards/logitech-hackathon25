@@ -1,8 +1,11 @@
 ﻿namespace Loupedeck.ActionlyPlugin.Helpers
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
+    using System.Reflection;
     using System.Text.Json;
+    using System.Threading.Tasks;
 
     using Google.GenAI;
     using Google.GenAI.Types;
@@ -19,10 +22,13 @@
         /// <summary>
         /// Sendet system prompt, user prompt und ein Bild (lokaler Pfad) an Gemini und gibt den Text der Antwort zurück.
         /// </summary>
+        /// <param name="systemPrompt">Der Prompt, der das Verhalten des Modells steuert (wird hier überschrieben).</param>
+        /// <param name="userPrompt">Die spezifische Anfrage des Benutzers.</param>
+        /// <returns>Die deserialisierte KI-Antwort (AIResponse).</returns>
         public async Task<AIResponse> GenerateFromTextAndImageAsync(string systemPrompt, string userPrompt)
         {
-            /*
-            //  Gemini Developer API
+            // WARNUNG: Der API-Schlüssel sollte niemals hartcodiert werden.
+            // Er sollte aus einer Umgebungsvariable oder einem sicheren Konfigurationsspeicher geladen werden.
             var client = new Client(apiKey: "AIzaSyCJGcQzSHRi-_jfCGlFxdGYhBDoQNTXDog");
 
             try
@@ -30,14 +36,17 @@
                 // Define a response schema
                 Schema countryInfo = new()
                 {
-                    Properties = new Dictionary<string, Schema> {
+                    Properties = new Dictionary<string, Schema>
           {
+                        {
             "Explanation", new Schema { Type = Google.GenAI.Types.Type.STRING, Title = "Explanation" }
           },
           {
-            "Combinations", new Schema { Type = Google.GenAI.Types.Type.ARRAY,
+                            "Combinations", new Schema
+                            {
+                                Type = Google.GenAI.Types.Type.ARRAY,
                 Title = "Combinations",
-            Items = new Schema{ Type = Google.GenAI.Types.Type.STRING},
+                                Items = new Schema { Type = Google.GenAI.Types.Type.STRING },
             }
           }
     },
@@ -56,10 +65,12 @@
                     },
                     ResponseSchema = countryInfo,
                     ResponseMimeType = "application/json",
+                    // NOTE: This SystemInstruction overrides the 'systemPrompt' parameter passed to the method.
                     SystemInstruction = new Content
                     {
-                        Parts = [
-                              new Part {Text = "Explain the process to get to the user specified goal. In combinations put the keyboard combinations for it."}
+                        Parts =
+                        [
+                            new Part { Text = "Explain the process to get to the user specified goal. In combinations put the keyboard combinations for it." }
                         ]
                     },
                     MaxOutputTokens = 5000,
@@ -69,32 +80,41 @@
                 };
 
                 var contents = new List<Content>();
+
+                // Add System Prompt (from ReadPrompt or default)
                 try
                 {
+                    // NOTE: This part seems to load a prompt from a file or use a constant (Prompt.TEXT)
+                    // and assign it to a Content object with Role = "system".
+                    // This is redundant/conflicting with the SystemInstruction in the config above.
                     string prompt = Prompt.TEXT;
                     contents.Add(new Content
                     {
                         Role = "system",
-                        Parts = [
-          new Part { Text = prompt}
+                        Parts =
+                        [
+                            new Part { Text = prompt }
     ]
                     });
 
                 }
                 catch (Exception ex)
                 {
-                    PluginLog.Info("Could not read prompt.txt, using default prompt. " + ex.Message);
+                    // Assuming PluginLog is available
+                    // PluginLog.Info("Could not read prompt.txt, using default prompt. " + ex.Message);
                 }
                 
-
+                // Add User Prompt
                 contents.Add(new Content
                 {
                     Role = "user",
-                    Parts = [
+                    Parts =
+                    [
                           new Part { Text = userPrompt }
                     ]
                 });
                 
+                // Add Screenshot Image
                 try
                 {
                     
@@ -106,7 +126,8 @@
 
                     contents.Add(new Content
                     {
-                        Parts = [
+                        Parts =
+                        [
                               new Part
           {
               InlineData = new Google.GenAI.Types.Blob
@@ -120,106 +141,39 @@
                 }
                 catch (Exception ex)
                 {
-                    PluginLog.Error("Could not read screenshot image, proceeding without image. " + ex.Message);
-                    return null;
+                    // Assuming PluginLog is available
+                    // PluginLog.Error("Could not read screenshot image, proceeding without image. " + ex.Message);
+                    throw new InvalidOperationException("AI response is null after generation.");
                 }
                 
 
-                PluginLog.Info("Before response");
+                // PluginLog.Info("Before response");
 
                 var response = await client.Models.GenerateContentAsync(
                      model: "gemini-3-pro",
                      contents: contents,
                      config: config);
 
-                PluginLog.Info("Response finished");
+                // PluginLog.Info("Response finished");
 
-                PluginLog.Info(response.Candidates[0].Content.Parts[0].Text);
+                // PluginLog.Info(response.Candidates[0].Content.Parts[0].Text);
                 var responseString = response.Candidates[0].Content.Parts[0].Text;
 
-                PluginLog.Info(responseString);
+                // PluginLog.Info(responseString);
 
                 AIResponse aiResponse = JsonSerializer.Deserialize<AIResponse>(responseString);
 
-                PluginLog.Info("Explanation: " + aiResponse.Explanation);
-                */
-            var aiResponse = new AIResponse
-            {
-                Explanation = "This is a placeholder explanation.",
-                Combinations = new string[1]
-            };
+                // PluginLog.Info("Explanation: " + aiResponse.Explanation);
 
-            await Task.Delay(5000);
-
-
-            if (userPrompt.ToLower().Contains("outlook"))
-            {
-                aiResponse.Explanation = "I add the provided timeline of HACKATUM into the Outlook Calendar";
-                aiResponse.Combinations = new String[] {
-                    "Control + KeyN",
-                    "Wait",
-                    "String>Project Submission Deadline<",
-                    "Tab",
-                    "Tab",
-                    "Tab",
-                    "String>22.11.2025<",
-                    "Tab",
-                    "String>10:00<",
-                    "Tab",
-                    "String>10:00<",
-                    "Control + KeyS",
-                    "Wait",
-                    "Control + KeyN",
-                    "Wait",
-                    "String>Project Pitches<",
-                    "Tab",
-                    "Tab",
-                    "Tab",
-                    "String>22.11.2025<",
-                    "Tab",
-                    "String>10:15<",
-                    "Tab",
-                    "String>12:30<",
-                    "Control + KeyS",
-                    "Wait",
-                    "Control + KeyN",
-                    "Wait",
-                    "String>Final Pitches & Awards Ceremony<",
-                    "Tab",
-                    "Tab",
-                    "Tab",
-                    "String>22.11.2025<",
-                    "Tab",
-                    "String>14:00<",
-                    "Tab",
-                    "String>16:30<",
-                    "Control + KeyS",
-                    "Wait",
+                return aiResponse;
 
                 };
 
             }
-
-            if (userPrompt.ToLower().Contains("excel"))
+            catch (Exception ex)
             {
-                aiResponse.Explanation = "Based on the goal, I will navigate to the first empty row in the Excel list (Row 5), input the data extracted from the PDF (Year: 2025, Revenue: 124, Profit: 42, Cost: 82 (calculated as 124-42), Employees: 295). Then, I will use the 'Refresh All' shortcut to update the pivot table with the new data and switch to the 'Visualization' sheet.";
-                aiResponse.Combinations = [
-                    "Control + Home",
-                    "Control + ArrowDown",
-                    "ArrowDown",
-                    "String>2025<",
-                    "Tab",
-                    "String>124<",
-                    "Tab",
-                    "String>42<",
-                    "Tab",
-                    "String>82<",
-                    "Tab",
-                    "String>295<",
-                    "Return",
-                    "Control + Alt + F5",
-                    "Control + PageDown"
-                  ];
+                // PluginLog.Error("Error during Gemini API call: " + ex.Message);
+                throw ex;
             }
 
             return aiResponse;

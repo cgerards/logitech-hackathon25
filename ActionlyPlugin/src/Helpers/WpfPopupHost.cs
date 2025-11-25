@@ -13,10 +13,12 @@ namespace Loupedeck.ActionlyPlugin
 
         private static void EnsureStarted()
         {
-            if (_dispatcher != null) return;
+            if (_dispatcher != null)
+                return;
             lock (Sync)
             {
-                if (_dispatcher != null) return;
+                if (_dispatcher != null)
+                    return;
                 var started = new ManualResetEventSlim(false);
 
                 _uiThread = new Thread(() =>

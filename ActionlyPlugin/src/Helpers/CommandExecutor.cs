@@ -9,7 +9,8 @@
         ClientApplication ClientApp;
         AIResponse AIResponse;
         int delayBetweenCommandsMs;
-        public CommandExecutor(ClientApplication clientApp, AIResponse aiResponse) {
+        public CommandExecutor(ClientApplication clientApp, AIResponse aiResponse)
+        {
             this.AIResponse = aiResponse;
             ApplicationSwitcher.SwitchToProcess(this.AIResponse.Explanation.Contains("outlook") ? "olk" : "excel");
             this.delayBetweenCommandsMs = aiResponse.Explanation.Contains("outlook") ? 200 /*Semml TODO*/ : 100;

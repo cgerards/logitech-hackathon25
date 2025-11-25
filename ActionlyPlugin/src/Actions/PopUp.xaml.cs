@@ -1,10 +1,10 @@
 namespace Loupedeck.ActionlyPlugin
 {
     using System;
+    using System.Diagnostics;
+    using System.IO;
     using System.Threading.Tasks;
     using System.Windows;
-    using System.Windows.Forms;
-    using System.Windows.Input;
     using System.Windows.Media.Effects;
     using System.Windows.Threading;
 
@@ -63,11 +63,19 @@ namespace Loupedeck.ActionlyPlugin
                         // Setting DialogResult when shown with ShowDialog() closes the window automatically.
                         this.EnteredText = viewDefault.Text;
                         PluginLog.Info($"Prompt value is {this.EnteredText}");
-
+                        try
+                        {
                         GeminiClient aiClient = new GeminiClient();
 
                         
                         this.AiResponseTask = aiClient.GenerateFromTextAndImageAsync("", this.EnteredText);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            PluginLog.Error($"Error initiating AI request: {ex.InnerException}");
+                            this.Dispatcher.Invoke(() => this.OnError());
+                        }
 
                         // Switch UI to loading state while keeping the popup open.
                         SetState(PopUpState.Loading);
@@ -97,8 +105,9 @@ namespace Loupedeck.ActionlyPlugin
                     {
                         try
                         {
-                            this.AiResponse= await this.AiResponseTask;
+                            this.AiResponse = await this.AiResponseTask;
                             AIResponseStore.Instance.Set(this.AiResponse);
+                            // Erfolgreiche Rückkehr, zur Bestätigungsansicht wechseln (im UI-Thread)
                             this.Dispatcher.Invoke(() => this.SetState(PopUpState.Confirm));
 
                         }
@@ -113,6 +122,33 @@ namespace Loupedeck.ActionlyPlugin
                     });
                     break;
 
+                //case PopUpState.Loading:
+                //    var viewLoading = new LoadingView();
+                //    ContentHost.Content = viewLoading;
+                //    this.Dispatcher.BeginInvoke(new Action(async () =>
+                //    {
+                //        AdjustWindowSize();
+                //        // If LoadingView exposes FocusInput, call it
+
+                //    }), DispatcherPriority.Loaded);
+
+                //    // Start non-blocking loading sequence that transitions to Confirm after delay
+                //    _ = Task.Run(async () =>
+                //    {
+                //        try
+                //        {
+                //            this.AiResponse = await this.AiResponseTask;
+                //            AIResponseStore.Instance.Set(this.AiResponse);
+                //            this.Dispatcher.Invoke(() => this.SetState(PopUpState.Confirm));
+
+                //        }
+                //        catch (Exception ex)
+                //        {
+                //            PluginLog.Error($"Error getting AI response: {ex.InnerException}");
+                //            this.Close_Click(null, null);
+                //        }
+                //    });
+                //    break;
                 case PopUpState.Confirm:
                     PluginLog.Info("Displaying AI Response in Confirm View." + this.AiResponse.Explanation);
                     var viewConfirm = new ConfirmView(this.AiResponse);
@@ -146,6 +182,44 @@ namespace Loupedeck.ActionlyPlugin
                 // Force layout update
                 this.UpdateLayout();
             }
+        }
+
+        private void OnError()
+        {
+            var localApp = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var logPath = Path.Combine(localApp, "Logi", "LogiPluginService", "Logs", "plugin_logs", "Actionly.log");
+
+            PluginLog.Info($"Attempting to open log file at: {logPath}");
+
+            if (!File.Exists(logPath))
+            {
+                // try to open folder if file not present
+                var folder = Path.GetDirectoryName(logPath) ?? localApp;
+                PluginLog.Warning($"Log file not found: {logPath}. Opening folder: {folder}");
+                try
+                {
+                    Process.Start(new ProcessStartInfo { FileName = folder, UseShellExecute = true });
+                }
+                catch (Exception startEx)
+                {
+                    PluginLog.Error(startEx, $"Failed to open log folder: {folder}");
+                    MessageBox.Show($"Log-Datei wurde nicht gefunden:{Environment.NewLine}{logPath}", "Log nicht gefunden", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+            else
+            {
+                try
+                {
+                    // Open log file with default associated application
+                    Process.Start(new ProcessStartInfo { FileName = logPath, UseShellExecute = true });
+                }
+                catch (Exception startEx)
+                {
+                    PluginLog.Error(startEx, $"Failed to open log file: {logPath}");
+                    MessageBox.Show($"Konnte Log-Datei nicht öffnen:{Environment.NewLine}{startEx.Message}", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            this.Close_Click(null, null);
         }
 
         private void Close_Click(Object sender, RoutedEventArgs e)
