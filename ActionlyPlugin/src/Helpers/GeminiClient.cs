@@ -27,12 +27,15 @@
 
             PluginLog.Info("Starting Gemini API call" + apiKey);
 
-            try
+            if (!model.Equals("mock"))
             {
-                // Define a response schema
-                Schema countryInfo = new()
+
+                try
                 {
-                    Properties = new Dictionary<string, Schema> {
+                    // Define a response schema
+                    Schema countryInfo = new()
+                    {
+                        Properties = new Dictionary<string, Schema> {
                         {
                             "Explanation", new Schema { Type = Google.GenAI.Types.Type.STRING, Title = "Explanation" }
                         },
@@ -43,73 +46,73 @@
                             }
                         }
                     },
-                    PropertyOrdering = ["Explanation", "Combinations"],
-                    Required = ["Explanation", "Combinations"],
-                    Title = "CountryInfo",
-                    Type = Google.GenAI.Types.Type.OBJECT
-                };
+                        PropertyOrdering = ["Explanation", "Combinations"],
+                        Required = ["Explanation", "Combinations"],
+                        Title = "CountryInfo",
+                        Type = Google.GenAI.Types.Type.OBJECT
+                    };
 
-                // Define a generation config
-                GenerateContentConfig config = new()
-                {
-                    HttpOptions = new HttpOptions
+                    // Define a generation config
+                    GenerateContentConfig config = new()
                     {
-                        Timeout = 120000
-                    },
-                    ResponseSchema = countryInfo,
-                    ResponseMimeType = "application/json",
-                    SystemInstruction = new Content
-                    {
-                        Parts = [
-                              new Part {Text = "Explain the process to get to the user specified goal. In combinations put the keyboard combinations for it."}
-                        ]
-                    },
-                    MaxOutputTokens = 5000,
-                    Temperature = 1,
-                    TopP = 0.8,
-                    TopK = 40,
-                };
+                        HttpOptions = new HttpOptions
+                        {
+                            Timeout = 120000
+                        },
+                        ResponseSchema = countryInfo,
+                        ResponseMimeType = "application/json",
+                        SystemInstruction = new Content
+                        {
+                            Parts = [
+                                  new Part {Text = "Explain the process to get to the user specified goal. In combinations put the keyboard combinations for it."}
+                            ]
+                        },
+                        MaxOutputTokens = 5000,
+                        Temperature = 1,
+                        TopP = 0.8,
+                        TopK = 40,
+                    };
 
-                var contents = new List<Content>();
-                try
-                {
-                    string prompt = Prompt.TEXT;
+                    var contents = new List<Content>();
+                    try
+                    {
+                        string prompt = Prompt.TEXT;
+                        contents.Add(new Content
+                        {
+                            Role = "model",
+                            Parts = [
+                                new Part { Text = prompt}
+                                ]
+                        });
+
+                    }
+                    catch (Exception ex)
+                    {
+                        PluginLog.Info("Could not read prompt.txt, using default prompt. " + ex.Message);
+                    }
+
+
                     contents.Add(new Content
                     {
-                        Role = "model",
+                        Role = "user",
                         Parts = [
-                            new Part { Text = prompt}
-                            ]
+                              new Part { Text = userPrompt }
+                        ]
                     });
 
-                }
-                catch (Exception ex)
-                {
-                    PluginLog.Info("Could not read prompt.txt, using default prompt. " + ex.Message);
-                }
-
-
-                contents.Add(new Content
-                {
-                    Role = "user",
-                    Parts = [
-                          new Part { Text = userPrompt }
-                    ]
-                });
-
-                try
-                {
-
-                    ScreenshotHelper.TakeScreenshot();
-
-                    byte[] imageBytes = File.ReadAllBytes(ScreenshotHelper.ScreenshotPath);
-
-
-
-                    contents.Add(new Content
+                    try
                     {
-                        Parts = [
-                              new Part
+
+                        ScreenshotHelper.TakeScreenshot();
+
+                        byte[] imageBytes = File.ReadAllBytes(ScreenshotHelper.ScreenshotPath);
+
+
+
+                        contents.Add(new Content
+                        {
+                            Parts = [
+                                  new Part
                               {
                                   InlineData = new Google.GenAI.Types.Blob
                                   {
@@ -117,47 +120,56 @@
                                       Data = imageBytes
                                   }
                               }
-                              ]
-                    });
+                                  ]
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        PluginLog.Error("Could not read screenshot image, proceeding without image. " + ex.Message);
+                        return null;
+                    }
+
+
+                    PluginLog.Info("Using model " + model);
+
+                    var response = await client.Models.GenerateContentAsync(
+                         model: model,
+                         contents: contents,
+                         config: config);
+
+                    PluginLog.Info("Response finished");
+
+                    PluginLog.Info(response.Candidates[0].Content.Parts[0].Text);
+                    var responseString = response.Candidates[0].Content.Parts[0].Text;
+
+                    PluginLog.Info(responseString);
+
+                    AIResponse aiResponse = JsonSerializer.Deserialize<AIResponse>(responseString);
+
+                    return aiResponse;
                 }
                 catch (Exception ex)
                 {
-                    PluginLog.Error("Could not read screenshot image, proceeding without image. " + ex.Message);
-                    return null;
+                    PluginLog.Error($"Error {ex.Message}");
+                    throw ex;
                 }
 
-                
-                PluginLog.Info("Using model " + model);
-
-                var response = await client.Models.GenerateContentAsync(
-                     model: model,
-                     contents: contents,
-                     config: config);
-
-                PluginLog.Info("Response finished");
-
-                PluginLog.Info(response.Candidates[0].Content.Parts[0].Text);
-                var responseString = response.Candidates[0].Content.Parts[0].Text;
-
-                PluginLog.Info(responseString);
-
-                AIResponse aiResponse = JsonSerializer.Deserialize<AIResponse>(responseString);
-
-                PluginLog.Info("Explanation: " + aiResponse.Explanation);
-                /*
-            var aiResponse = new AIResponse
+            }
+            else
             {
-                Explanation = "This is a placeholder explanation.",
-                Combinations = new string[1]
-            };
+                var aiResponse = new AIResponse
+                {
+                    Explanation = "This is a placeholder explanation.",
+                    Combinations = new string[1]
+                };
 
-            await Task.Delay(5000);
+                await Task.Delay(5000);
 
 
-            if (userPrompt.ToLower().Contains("outlook"))
-            {
-                aiResponse.Explanation = "I add the provided timeline of HACKATUM into the Outlook Calendar";
-                aiResponse.Combinations = new String[] {
+                if (userPrompt.ToLower().Contains("outlook"))
+                {
+                    aiResponse.Explanation = "I add the provided timeline of HACKATUM into the Outlook Calendar";
+                    aiResponse.Combinations = new String[] {
                     "Control + KeyN",
                     "Wait",
                     "String>Project Submission Deadline<",
@@ -203,13 +215,13 @@
 
                 };
 
-            }
+                }
 
-            if (userPrompt.ToLower().Contains("excel"))
-            {
-                aiResponse.Explanation = "Based on the goal, I will navigate to the first empty row in the Excel list (Row 5), input the data extracted from the PDF (Year: 2025, Revenue: 124, Profit: 42, Cost: 82 (calculated as 124-42), Employees: 295). Then, I will use the 'Refresh All' shortcut to update the pivot table with the new data and switch to the 'Visualization' sheet.";
-                aiResponse.Combinations = [
-                    "Control + Home",
+                if (userPrompt.ToLower().Contains("excel"))
+                {
+                    aiResponse.Explanation = "Based on the goal, I will navigate to the first empty row in the Excel list (Row 5), input the data extracted from the PDF (Year: 2025, Revenue: 124, Profit: 42, Cost: 82 (calculated as 124-42), Employees: 295). Then, I will use the 'Refresh All' shortcut to update the pivot table with the new data and switch to the 'Visualization' sheet.";
+                    aiResponse.Combinations = [
+                        "Control + Home",
                     "Control + ArrowDown",
                     "ArrowDown",
                     "String>2025<",
@@ -224,17 +236,13 @@
                     "Return",
                     "Control + Alt + F5",
                     "Control + PageDown"
-                  ];
-            }*/
-
+                      ];
+                }
                 return aiResponse;
+            }
 
-            }
-            catch (Exception ex)
-            {
-                PluginLog.Error("Error during Gemini API call: " + ex.Message);
-                return null;
-            }
+            return null;
+
         }
 
 
