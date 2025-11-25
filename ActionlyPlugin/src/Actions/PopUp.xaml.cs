@@ -1,8 +1,6 @@
 namespace Loupedeck.ActionlyPlugin
 {
     using System;
-    using System.Diagnostics;
-    using System.IO;
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Media.Effects;
@@ -13,23 +11,26 @@ namespace Loupedeck.ActionlyPlugin
     using Loupedeck.ActionlyPlugin.Views;
 
 
-
     public enum PopUpState
     {
         Default,
         Confirm,
-        Loading
+        Loading,
+        Settings
     }
 
     public partial class PopUpWindow : Window
     {
         public String EnteredText { get; private set; }
+        public String ApiKey { get; set; }
+        public String Model { get; set; }
         public PopUpState CurrentState { get; private set; } = PopUpState.Default;
         public Task<AIResponse> AiResponseTask { get; set; }
         public AIResponse AiResponse { get; set; }
+        public String PluginPath { get; set; }
 
 
-        public PopUpWindow()
+        public PopUpWindow(string path)
         {
             InitializeComponent();
 
@@ -41,6 +42,9 @@ namespace Loupedeck.ActionlyPlugin
                 Opacity = 0.5,
                 ShadowDepth = 2
             };
+
+            this.PluginPath = path;
+            PluginLog.Info("PATH: " + path);
 
             // default content
             this.SetState(PopUpState.Default);
@@ -60,6 +64,7 @@ namespace Loupedeck.ActionlyPlugin
                         // Capture entered text but do NOT set DialogResult or close the window here.
                         // Setting DialogResult when shown with ShowDialog() closes the window automatically.
                         this.EnteredText = viewDefault.Text;
+
                         PluginLog.Info($"Prompt value is {this.EnteredText}");
                         try
                         {
@@ -78,6 +83,22 @@ namespace Loupedeck.ActionlyPlugin
                         // Switch UI to loading state while keeping the popup open.
                         SetState(PopUpState.Loading);
                     };
+
+                    viewDefault.SettingsRequested += (s, e) =>
+                    {
+                        PluginLog.Info("Settings requested from DefaultView.");
+                        // Switch to Settings view
+                        SetState(PopUpState.Settings);
+                    };
+
+                    viewDefault.CloseRequested += (s, e) =>
+                    {
+                        // Handle close request from DefaultView
+                        this.DialogResult = false;
+                        this.Close();
+                    };
+
+
 
                     ContentHost.Content = viewDefault;
                     // Defer sizing/focus until WPF has measured the new content
@@ -156,6 +177,29 @@ namespace Loupedeck.ActionlyPlugin
 
 
                     break;
+            }
+        }
+
+        private void LoadSettings()
+        {
+            try
+            {
+                var modelFile = Path.Combine(this.PluginPath, "model.txt");
+                var keyFile = Path.Combine(this.PluginPath, "apikey.txt");
+                PluginLog.Info("Loading settings from " + modelFile + " and " + keyFile);
+
+                if (File.Exists(modelFile))
+                {
+                    this.Model = File.ReadAllText(modelFile);
+                }
+                if (File.Exists(keyFile))
+                {
+                    this.ApiKey = File.ReadAllText(keyFile);
+                }
+            }
+            catch (Exception ex)
+            {
+                PluginLog.Error("Error loading settings in popup: " + ex.Message);
             }
         }
 

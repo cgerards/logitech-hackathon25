@@ -26,26 +26,25 @@
         /// <returns>Die deserialisierte KI-Antwort (AIResponse).</returns>
         public async Task<AIResponse> GenerateFromTextAndImageAsync(string systemPrompt, string userPrompt)
         {
-            // WARNUNG: Der API-Schlüssel sollte niemals hartcodiert werden.
-            // Er sollte aus einer Umgebungsvariable oder einem sicheren Konfigurationsspeicher geladen werden.
-            var client = new Client(apiKey: "AIzaSyCJGcQzSHRi-_jfCGlFxdGYhBDoQNTXDog");
+
+            //  Gemini Developer API
+            var client = new Client(apiKey: apiKey);
+
+            PluginLog.Info("Starting Gemini API call" + apiKey);
 
             try
             {
                 // Define a response schema
                 Schema countryInfo = new()
                 {
-                    Properties = new Dictionary<string, Schema>
-                    {
+                    Properties = new Dictionary<string, Schema> {
                         {
                             "Explanation", new Schema { Type = Google.GenAI.Types.Type.STRING, Title = "Explanation" }
                         },
                         {
-                            "Combinations", new Schema
-                            {
-                                Type = Google.GenAI.Types.Type.ARRAY,
+                            "Combinations", new Schema { Type = Google.GenAI.Types.Type.ARRAY,
                                 Title = "Combinations",
-                                Items = new Schema { Type = Google.GenAI.Types.Type.STRING },
+                                Items = new Schema{ Type = Google.GenAI.Types.Type.STRING},
                             }
                         }
                     },
@@ -89,11 +88,10 @@
                     string prompt = Prompt.TEXT;
                     contents.Add(new Content
                     {
-                        Role = "system",
-                        Parts =
-                        [
-                            new Part { Text = prompt }
-                        ]
+                        Role = "model",
+                        Parts = [
+                            new Part { Text = prompt}
+                            ]
                     });
                 }
                 catch (Exception ex)
@@ -102,7 +100,7 @@
                     // PluginLog.Info("Could not read prompt.txt, using default prompt. " + ex.Message);
                 }
 
-                // Add User Prompt
+
                 contents.Add(new Content
                 {
                     Role = "user",
@@ -112,7 +110,6 @@
                     ]
                 });
 
-                // Add Screenshot Image
                 try
                 {
                     ScreenshotHelper.TakeScreenshot();
@@ -120,17 +117,16 @@
 
                     contents.Add(new Content
                     {
-                        Parts =
-                        [
-                            new Part
-                            {
-                                InlineData = new Google.GenAI.Types.Blob
-                                {
-                                    MimeType = "image/png",
-                                    Data = imageBytes
-                                }
-                            }
-                        ]
+                        Parts = [
+                              new Part
+                              {
+                                  InlineData = new Google.GenAI.Types.Blob
+                                  {
+                                      MimeType = "image/png",
+                                      Data = imageBytes
+                                  }
+                              }
+                              ]
                     });
                 }
                 catch (Exception ex)
@@ -140,13 +136,13 @@
                     throw new InvalidOperationException("AI response is null after generation.");
                 }
 
-
-                // PluginLog.Info("Before response");
+                
+                PluginLog.Info("Using model " + model);
 
                 var response = await client.Models.GenerateContentAsync(
-                    model: "gemini-3-pro",
-                    contents: contents,
-                    config: config);
+                     model: model,
+                     contents: contents,
+                     config: config);
 
                 // PluginLog.Info("Response finished");
 
@@ -168,6 +164,8 @@
                 throw ex;
             }
         }
+
+
 
         private string ReadPrompt()
         {

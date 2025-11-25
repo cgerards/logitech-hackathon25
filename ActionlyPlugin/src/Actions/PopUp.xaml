@@ -4,36 +4,17 @@
         Title="" Height="150" Width="300"
         WindowStyle="None" AllowsTransparency="True" Background="Transparent"
         ShowInTaskbar="False" Topmost="True" Loaded="Window_Loaded">
-    <Border CornerRadius="8" Background="#FF2D2D30" Padding="6" Effect="{DynamicResource _DropShadow}">
+    <Border CornerRadius="8" Background="#232423" Padding="0" Effect="{DynamicResource _DropShadow}">
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="20" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
             <!-- Top-right Close X -->
-            <Button Grid.Row="0" x:Name="CloseTopButton" Width="28" Height="22" HorizontalAlignment="Right" VerticalAlignment="Top"
-                    Margin="0,0,0,0" Padding="0" Background="Transparent" BorderBrush="Transparent" Click="Close_Click"
-                    ToolTip="Close">
-                <Grid>
-                    <Ellipse Fill="Transparent" />
-                    <TextBlock Text="✕" Foreground="#FFD0D0D0" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Grid>
-                <Button.Style>
-                    <Style TargetType="Button">
-                        <Setter Property="Background" Value="Transparent"/>
-                        <Setter Property="Cursor" Value="Hand"/>
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#22FFFFFF"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </Button.Style>
-            </Button>
+            
 
             <!-- Dynamic UI region -->
-            <ContentControl x:Name="ContentHost" Grid.Row="1" Margin="4,4,4,4">
+            <ContentControl x:Name="ContentHost" Grid.Row="1" Margin="0,0,0,0">
                 <TextBlock Text="{Binding Response.Explanation}" />
             </ContentControl>
 

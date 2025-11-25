@@ -8,10 +8,20 @@ namespace Loupedeck.ActionlyPlugin.Views
 
     public partial class DefaultView : UserControl
     {
+
+        public event EventHandler CloseRequested;
+
         public DefaultView()
         {
             InitializeComponent();
             this.InnerInputTextBox.KeyDown += InnerInputTextBox_KeyDown;
+        }
+
+
+        public void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Event auslösen
+            CloseRequested?.Invoke(this, EventArgs.Empty);
         }
 
         private void InnerInputTextBox_KeyDown(object sender, KeyEventArgs e)
@@ -25,8 +35,11 @@ namespace Loupedeck.ActionlyPlugin.Views
         }
 
         public event EventHandler SubmitRequested;
+        public event EventHandler SettingsRequested;
+
 
         public string Text => this.InnerInputTextBox?.Text ?? string.Empty;
+
 
         public void FocusInput()
         {
@@ -43,5 +56,19 @@ namespace Loupedeck.ActionlyPlugin.Views
             // Raise the same SubmitRequested event as pressing Enter
             this.SubmitRequested?.Invoke(this, EventArgs.Empty);
         }
+
+        private void MyComboBox_SelectionChanged(Object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.SettingsRequested?.Invoke(this, EventArgs.Empty);
+        }
+
+
+
     }
+
 }

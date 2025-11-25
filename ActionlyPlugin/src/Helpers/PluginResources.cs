@@ -53,6 +53,6 @@ namespace Loupedeck.ActionlyPlugin
         // Extracts the specified resource file to the given file path in the file system.
         // Throws `FileNotFoundException` if the resource file is not found, or a system exception if the output file cannot be written.
         public static void ExtractFile(String resourceName, String filePathName)
-            => PluginResources._assembly.ExtractFile(PluginResources.FindFile(resourceName), filePathName);
+                => PluginResources._assembly.ExtractFile(PluginResources.FindFile(resourceName), filePathName);
     }
 }

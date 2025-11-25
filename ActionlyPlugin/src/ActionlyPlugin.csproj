@@ -30,6 +30,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Views\actionly-logo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Google.GenAI" Version="0.6.0" />
   </ItemGroup>
 
@@ -44,6 +48,11 @@
 	</ItemGroup>
   <ItemGroup>
     <Folder Include="Helpers\Models\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Views\actionly-logo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <None Update="Helpers\Prompt.txt">
