@@ -32,12 +32,15 @@
 
             PluginLog.Info("Starting Gemini API call" + apiKey);
 
-            try
+            if (!model.Equals("mock"))
             {
-                // Define a response schema
-                Schema countryInfo = new()
+
+                try
                 {
-                    Properties = new Dictionary<string, Schema> {
+                    // Define a response schema
+                    Schema countryInfo = new()
+                    {
+                        Properties = new Dictionary<string, Schema> {
                         {
                             "Explanation", new Schema { Type = Google.GenAI.Types.Type.STRING, Title = "Explanation" }
                         },
@@ -48,77 +51,73 @@
                             }
                         }
                     },
-                    PropertyOrdering = ["Explanation", "Combinations"],
-                    Required = ["Explanation", "Combinations"],
-                    Title = "CountryInfo",
-                    Type = Google.GenAI.Types.Type.OBJECT
-                };
+                        PropertyOrdering = ["Explanation", "Combinations"],
+                        Required = ["Explanation", "Combinations"],
+                        Title = "CountryInfo",
+                        Type = Google.GenAI.Types.Type.OBJECT
+                    };
 
-                // Define a generation config
-                GenerateContentConfig config = new()
-                {
-                    HttpOptions = new HttpOptions
+                    // Define a generation config
+                    GenerateContentConfig config = new()
                     {
-                        Timeout = 120000
-                    },
-                    ResponseSchema = countryInfo,
-                    ResponseMimeType = "application/json",
-                    // NOTE: This SystemInstruction overrides the 'systemPrompt' parameter passed to the method.
-                    SystemInstruction = new Content
-                    {
-                        Parts =
-                        [
-                            new Part { Text = "Explain the process to get to the user specified goal. In combinations put the keyboard combinations for it." }
-                        ]
-                    },
-                    MaxOutputTokens = 5000,
-                    Temperature = 1,
-                    TopP = 0.8,
-                    TopK = 40,
-                };
-
-                var contents = new List<Content>();
-
-                // Add System Prompt (from ReadPrompt or default)
-                try
-                {
-                    // NOTE: This part seems to load a prompt from a file or use a constant (Prompt.TEXT)
-                    // and assign it to a Content object with Role = "system".
-                    // This is redundant/conflicting with the SystemInstruction in the config above.
-                    string prompt = Prompt.TEXT;
-                    contents.Add(new Content
-                    {
-                        Role = "model",
-                        Parts = [
-                            new Part { Text = prompt}
+                        HttpOptions = new HttpOptions
+                        {
+                            Timeout = 120000
+                        },
+                        ResponseSchema = countryInfo,
+                        ResponseMimeType = "application/json",
+                        SystemInstruction = new Content
+                        {
+                            Parts = [
+                                  new Part {Text = "Explain the process to get to the user specified goal. In combinations put the keyboard combinations for it."}
                             ]
-                    });
-                }
-                catch (Exception ex)
-                {
-                    // Assuming PluginLog is available
-                    // PluginLog.Info("Could not read prompt.txt, using default prompt. " + ex.Message);
-                }
+                        },
+                        MaxOutputTokens = 5000,
+                        Temperature = 1,
+                        TopP = 0.8,
+                        TopK = 40,
+                    };
 
+                    var contents = new List<Content>();
+                    try
+                    {
+                        string prompt = Prompt.TEXT;
+                        contents.Add(new Content
+                        {
+                            Role = "model",
+                            Parts = [
+                                new Part { Text = prompt}
+                                ]
+                        });
 
-                contents.Add(new Content
-                {
-                    Role = "user",
-                    Parts =
-                    [
-                        new Part { Text = userPrompt }
-                    ]
-                });
+                    }
+                    catch (Exception ex)
+                    {
+                        PluginLog.Info("Could not read prompt.txt, using default prompt. " + ex.Message);
+                    }
 
-                try
-                {
-                    ScreenshotHelper.TakeScreenshot();
-                    byte[] imageBytes = File.ReadAllBytes(ScreenshotHelper.ScreenshotPath);
 
                     contents.Add(new Content
                     {
+                        Role = "user",
                         Parts = [
-                              new Part
+                              new Part { Text = userPrompt }
+                        ]
+                    });
+
+                    try
+                    {
+
+                        ScreenshotHelper.TakeScreenshot();
+
+                        byte[] imageBytes = File.ReadAllBytes(ScreenshotHelper.ScreenshotPath);
+
+
+
+                        contents.Add(new Content
+                        {
+                            Parts = [
+                                  new Part
                               {
                                   InlineData = new Google.GenAI.Types.Blob
                                   {
@@ -136,26 +135,27 @@
                     throw new InvalidOperationException("AI response is null after generation.");
                 }
 
-                
-                PluginLog.Info("Using model " + model);
 
-                var response = await client.Models.GenerateContentAsync(
-                     model: model,
-                     contents: contents,
-                     config: config);
+                    PluginLog.Info("Using model " + model);
 
-                // PluginLog.Info("Response finished");
+                    var response = await client.Models.GenerateContentAsync(
+                         model: model,
+                         contents: contents,
+                         config: config);
 
-                // PluginLog.Info(response.Candidates[0].Content.Parts[0].Text);
-                var responseString = response.Candidates[0].Content.Parts[0].Text;
+                    PluginLog.Info("Response finished");
 
-                // PluginLog.Info(responseString);
+                    PluginLog.Info(response.Candidates[0].Content.Parts[0].Text);
+                    var responseString = response.Candidates[0].Content.Parts[0].Text;
 
-                AIResponse aiResponse = JsonSerializer.Deserialize<AIResponse>(responseString);
+                    PluginLog.Info(responseString);
+
+                    AIResponse aiResponse = JsonSerializer.Deserialize<AIResponse>(responseString);
 
                 // PluginLog.Info("Explanation: " + aiResponse.Explanation);
 
                 return aiResponse;
+            }
 
             }
             catch (Exception ex)

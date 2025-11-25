@@ -163,6 +163,25 @@ ToolTip="Close">
                             </Style>
                         </ComboBoxItem.Style>
                     </ComboBoxItem>
+
+
+                    <ComboBoxItem Content="Mock" Tag="mock">
+                        <ComboBoxItem.Style>
+                            <Style TargetType="ComboBoxItem">
+                                <Setter Property="Foreground" Value="#e0e0e0"/>
+                                <Setter Property="Background" Value="#2d2d30"/>
+                                <Setter Property="Padding" Value="10,6"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#3e3e42"/>
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="#094771"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ComboBoxItem.Style>
+                    </ComboBoxItem>
                 </ComboBox>
             </Grid>
 
