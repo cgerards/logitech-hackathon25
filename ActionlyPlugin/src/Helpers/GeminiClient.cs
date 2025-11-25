@@ -162,24 +162,93 @@
                     // PluginLog.Error("Error during Gemini API call: " + ex.Message);
                     throw ex;
                 }
+            }else
+            {
+                
+            var aiResponse = new AIResponse
+            {
+                Explanation = "This is a placeholder explanation.",
+                Combinations = new string[1]
+            };
+
+            await Task.Delay(5000);
+
+
+            if (userPrompt.ToLower().Contains("outlook"))
+            {
+                aiResponse.Explanation = "I add the provided timeline of HACKATUM into the Outlook Calendar";
+                aiResponse.Combinations = new String[] {
+                    "Control + KeyN",
+                    "Wait",
+                    "String>Project Submission Deadline<",
+                    "Tab",
+                    "Tab",
+                    "Tab",
+                    "String>23.11.2025<",
+                    "Tab",
+                    "String>10:00<",
+                    "Tab",
+                    "String>10:00<",
+                    "Tab",
+                    "Control + KeyS",
+                    "Wait",
+                    "Control + KeyN",
+                    "Wait",
+                    "String>Project Pitches<",
+                    "Tab",
+                    "Tab",
+                    "Tab",
+                    "String>23.11.2025<",
+                    "Tab",
+                    "String>10:15<",
+                    "Tab",
+                    "String>12:30<",
+                    "Tab",
+                    "Control + KeyS",
+                    "Wait",
+                    "Control + KeyN",
+                    "Wait",
+                    "String>Final Pitches & Awards Ceremony<",
+                    "Tab",
+                    "Tab",
+                    "Tab",
+                    "String>23.11.2025<",
+                    "Tab",
+                    "String>14:00<",
+                    "Tab",
+                    "String>16:30<",
+                    "Tab",
+                    "Control + KeyS",
+                    "Wait",
+
+                };
+
             }
-            return null;
+
+            if (userPrompt.ToLower().Contains("excel"))
+            {
+                aiResponse.Explanation = "Based on the goal, I will navigate to the first empty row in the Excel list (Row 5), input the data extracted from the PDF (Year: 2025, Revenue: 124, Profit: 42, Cost: 82 (calculated as 124-42), Employees: 295). Then, I will use the 'Refresh All' shortcut to update the pivot table with the new data and switch to the 'Visualization' sheet.";
+                aiResponse.Combinations = [
+                    "Control + Home",
+                    "Control + ArrowDown",
+                    "ArrowDown",
+                    "String>2025<",
+                    "Tab",
+                    "String>124<",
+                    "Tab",
+                    "String>42<",
+                    "Tab",
+                    "String>82<",
+                    "Tab",
+                    "String>295<",
+                    "Return",
+                    "Control + Alt + F5",
+                    "Control + PageDown"
+                  ];
+            }
+                return aiResponse;
+            }
         }
 
-
-
-        private string ReadPrompt()
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-
-            // Namespace + Dateiname → sehr wichtig!
-            string resourceName = "Loupedeck.ActionlyPlugin.Helpers.prompt.txt";
-
-            using Stream stream = assembly.GetManifestResourceStream(resourceName)
-                ?? throw new Exception("Resource nicht gefunden!");
-
-            using StreamReader reader = new StreamReader(stream);
-            return reader.ReadToEnd();
-        }
     }
 }
